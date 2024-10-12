@@ -1,0 +1,310 @@
+$date
+	Sun Oct 13 01:10:44 2024
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module test_RISCV $end
+$var reg 1 ! clk1 $end
+$var reg 1 " clk2 $end
+$var integer 32 # k [31:0] $end
+$scope module risc_p $end
+$var wire 1 ! clk1 $end
+$var wire 1 " clk2 $end
+$var parameter 6 $ ADD $end
+$var parameter 6 % ADDI $end
+$var parameter 6 & AND $end
+$var parameter 6 ' BEQZ $end
+$var parameter 6 ( BNEQZ $end
+$var parameter 3 ) BRANCH $end
+$var parameter 3 * HAT $end
+$var parameter 6 + HLT $end
+$var parameter 3 , LOAD $end
+$var parameter 6 - LW $end
+$var parameter 6 . MUL $end
+$var parameter 6 / OR $end
+$var parameter 3 0 RM_ALU $end
+$var parameter 3 1 RR_ALU $end
+$var parameter 6 2 SLT $end
+$var parameter 6 3 SLTI $end
+$var parameter 3 4 STORE $end
+$var parameter 6 5 SUB $end
+$var parameter 6 6 SUBI $end
+$var parameter 6 7 SW $end
+$var reg 32 8 EX_MEM_ALUout [31:0] $end
+$var reg 32 9 EX_MEM_IR [31:0] $end
+$var reg 1 : EX_MEM_condition $end
+$var reg 1 ; HALTED $end
+$var reg 32 < IF_ID_IR [31:0] $end
+$var reg 32 = IF_ID_NPC [31:0] $end
+$var reg 32 > PC [31:0] $end
+$var reg 1 ? TAKEN_BRANCH $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1001 7
+b1011 6
+b1 5
+b11 4
+b1100 3
+b100 2
+b0 1
+b1 0
+b11 /
+b101 .
+b1000 -
+b10 ,
+b111111 +
+b101 *
+b100 )
+b1101 (
+b1110 '
+b10 &
+b1010 %
+b0 $
+$end
+#0
+$dumpvars
+0?
+b0 >
+bx =
+bx <
+0;
+x:
+bx 9
+bx 8
+b100000 #
+0"
+0!
+$end
+#5
+1!
+#7
+b1 >
+b1 =
+b101000000000010000000000001010 <
+#10
+0!
+#15
+1"
+#20
+0"
+#25
+1!
+#27
+b10 >
+b10 =
+b101000000000100000000000010100 <
+#30
+0!
+#35
+1"
+#40
+0"
+#45
+1!
+#47
+b11 >
+b11 =
+b1000100010000000000000 <
+#50
+0!
+#55
+1"
+#60
+0"
+#65
+1!
+#67
+b100 >
+b100 =
+b11111100000000000000000000000000 <
+#70
+0!
+#75
+1"
+#80
+0"
+#85
+1!
+#87
+b101 >
+b101 =
+bx <
+#90
+0!
+#95
+1"
+#100
+0"
+#105
+1!
+#107
+b110 >
+b110 =
+#110
+0!
+#115
+1"
+#120
+0"
+#125
+1!
+#127
+b111 >
+b111 =
+#130
+0!
+#135
+1"
+#140
+0"
+#145
+1!
+#147
+b1000 >
+b1000 =
+#150
+0!
+#155
+1"
+#160
+0"
+#165
+1!
+#167
+b1001 >
+b1001 =
+#170
+0!
+#175
+1"
+#180
+0"
+#185
+1!
+#187
+b1010 >
+b1010 =
+#190
+0!
+#195
+1"
+#200
+0"
+#205
+1!
+#207
+b1011 >
+b1011 =
+#210
+0!
+#215
+1"
+#220
+0"
+#225
+1!
+#227
+b1100 >
+b1100 =
+#230
+0!
+#235
+1"
+#240
+0"
+#245
+1!
+#247
+b1101 >
+b1101 =
+#250
+0!
+b110 #
+#255
+1"
+#260
+0"
+#265
+1!
+#267
+b1110 >
+b1110 =
+#270
+0!
+#275
+1"
+#280
+0"
+#285
+1!
+#287
+b1111 >
+b1111 =
+#290
+0!
+#295
+1"
+#300
+0"
+#305
+1!
+#307
+b10000 >
+b10000 =
+#310
+0!
+#315
+1"
+#320
+0"
+#325
+1!
+#327
+b10001 >
+b10001 =
+#330
+0!
+#335
+1"
+#340
+0"
+#345
+1!
+#347
+b10010 >
+b10010 =
+#350
+0!
+#355
+1"
+#360
+0"
+#365
+1!
+#367
+b10011 >
+b10011 =
+#370
+0!
+#375
+1"
+#380
+0"
+#385
+1!
+#387
+b10100 >
+b10100 =
+#390
+0!
+#395
+1"
+#400
+0"
