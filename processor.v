@@ -13,49 +13,95 @@ Version 3: Verilog/VHDL: 140%, bonus allowed. No synthesis in the
 no-bonus version.
 */
 
-module pipeline_RISCV (clk1, clk2);
-input clk1, clk2;                   // TWO PHASE CLK
+module pipeline_RISCV (clk);
+input clk;                   // TWO PHASE CLK
 
-reg [31:0] PC, IF_ID_IR,IF_ID_NPC;
-reg [31:0] ID_EX_IR,ID_EX_NPC;
-reg [2:0] ID_EX_type, EX_MEM_type, MEM_WB_type;
-reg[31:0] EX_MEM_IR,EX_MEM_ALUout, EX_MEM_B;
-reg EX_MEM_condition;
-reg[31:0] MEM_WB_IR, MEM_WB_ALUout, MEM_WB_LMD;
+reg [31:0] PC;           // PROGRAM COUNTER
+reg [31:0] IR;          // INSTRUCTION REGISTER
+reg [31:0] branchPC;
+wire[31:0] nextPC;
+// reg [31:0] instruction;
 
-reg [31:0] RegFile [0:31];      // REGISTER FILE (32 X 32)
-reg [31:0] Memory[0:1023];     //  MEMORY (1024 X 32)
 
-parameter ADD =6'b000000,SUB=6'b000001,AND =6'b000010, OR=6'b000011,
-SLT=6'b000100,MUL=6'b000101,HLT=6'b111111,LW=6'b001000,SW=6'b001001,ADDI=6'b001010,SUBI=6'b001011,SLTI=6'b001100,
-BNEQZ=6'b001101,BEQZ=6'b001110;
+parameter ADD =5'b00000,SUB=5'b00001,MUL = 5'b00010, DIV=5'b00011,
+MOD=5'b00100,CMP=5'b00101,AND=5'b00110,OR=5'b00111,NOT=5'b01000,MOV=5'b01001,LSL=5'b01010,LSR=5'b01011,
+ASR=5'b01100,NOP=5'b01101,LD=5'b01110,ST=5'b01111,BEQ=5'b10000,BGT=5'b10001,B=5'b10010,CALL=5'b10011, RET=5'b10100;
 
-parameter RR_ALU=3'b000,RM_ALU=3'b001, LOAD=3'b010, STORE=3'b011,BRANCH=3'b100,HAT=3'b101;
 
-reg HALTED;   // SET TO TERMINATE PROGRAM AFTER (SERVES AS LAST INSTRUCTION)
+reg HALTED;
 
-reg TAKEN_BRANCH;  // TO DISABLE INSTRUCTION AFTER BRANCH
+reg is_Branch_Taken;  // TO DISABLE INSTRUCTION AFTER BRANCH
+
 
 //  ********************  INSTRUCTION FETCH STAGE  ********************
 
-always @(posedge clk1)    
-if(HALTED == 0)
-begin
-    if(((EX_MEM_IR[31:26] == BEQZ) && (EX_MEM_condition == 1)) || 
-    ((EX_MEM_IR[31:26] == BNEQZ) && (EX_MEM_condition == 0)))
-        begin
-                IF_ID_IR      <= #2 Memory[EX_MEM_ALUout];
-                TAKEN_BRANCH  <= #2 1'b1;
-                IF_ID_NPC     <= #2 EX_MEM_ALUout +1;
-                PC            <= #2 EX_MEM_ALUout +1;
-        end
-    else
-        begin
-            IF_ID_IR        <= #2 Memory[PC];
-            IF_ID_NPC       <= #2 PC + 1;
-            PC              <= #2 PC + 1;
-        end
+    mux2x1 pc_mux(
+        .output_y(nextPC),            // MUX output: the next value of the PC
+        .input0(PC + 4),            // Normal PC increment by 4
+        .input1(branchPC),          // Branch target address
+        .selectLine(is_Branch_Taken)     // Selection signal: branch taken or not
+    );
+
+
+
+    // Register file signals
+    wire [31:0] rdData1, rdData2;
+    reg [31:0] wrData;
+    reg [3:0] op1, op2, dReg;
+    reg writeEnable;
+    reg reset;
+
+    // Instantiate the register file
+    registerFile regfile(
+        .rdData1(rdData1), 
+        .rdData2(rdData2), 
+        .wrData(wrData), 
+        .op1(op1), 
+        .op2(op2), 
+        .dReg(dReg), 
+        .writeEnable(writeEnable), 
+        .reset(reset), 
+        .clk(clk)
+    );
+
+    // Memory signals and instantiation
+    wire [31:0] instruction;
+    // reg [7:0] memory [0:1023];
+    reg [9:0] address;
+    reg writeEnableMem;
+    reg [31:0] writeDataMem;
+    
+    // Byte-addressable memory instantiated
+    memory mem(
+        .instruction(instruction),
+        .address(address),
+        .clk(clk),
+        .writeEnable(writeEnableMem),
+        .writeData(writeDataMem)
+    );
+
+
+// ********************  INITIALIZATION  ********************
+initial begin
+    PC = 0;                 // Initialize PC to 0
+    branchPC = 0;           // Initialize branchPC to 0
+    is_Branch_Taken = 0;    // Initialize is_Branch_Taken to 0
+    HALTED=0;
 end
+
+    // ********************  INSTRUCTION FETCH STAGE  ********************
+    always @(negedge clk) begin
+        if(!HALTED) begin
+        // Fetch the instruction from memory at the new PC address
+                IR  <= { mem.memory[PC + 3],   // Most significant byte (MSB)
+                         mem.memory[PC + 2], 
+                         mem.memory[PC + 1], 
+                         mem.memory[PC] };    // Least significant byte (LSB)
+        
+        PC <= nextPC;
+        end
+
+    end
 
 
 endmodule
