@@ -12,96 +12,102 @@ Version 2: In Bluespec/PyHDL/Chisel/... : 110%, bonus allowed
 Version 3: Verilog/VHDL: 140%, bonus allowed. No synthesis in the
 no-bonus version.
 */
-
-module pipeline_RISCV (clk);
-input clk;                   // TWO PHASE CLK
-
-reg [31:0] PC;           // PROGRAM COUNTER
-reg [31:0] IR;          // INSTRUCTION REGISTER
-reg [31:0] branchPC;
-wire[31:0] nextPC;
-// reg [31:0] instruction;
-
-
-parameter ADD =5'b00000,SUB=5'b00001,MUL = 5'b00010, DIV=5'b00011,
-MOD=5'b00100,CMP=5'b00101,AND=5'b00110,OR=5'b00111,NOT=5'b01000,MOV=5'b01001,LSL=5'b01010,LSR=5'b01011,
-ASR=5'b01100,NOP=5'b01101,LD=5'b01110,ST=5'b01111,BEQ=5'b10000,BGT=5'b10001,B=5'b10010,CALL=5'b10011, RET=5'b10100;
-
-
-reg HALTED;
-
-reg is_Branch_Taken;  // TO DISABLE INSTRUCTION AFTER BRANCH
-
-
-//  ********************  INSTRUCTION FETCH STAGE  ********************
-
-    mux2x1 pc_mux(
-        .output_y(nextPC),            // MUX output: the next value of the PC
-        .input0(PC + 4),            // Normal PC increment by 4
-        .input1(branchPC),          // Branch target address
-        .selectLine(is_Branch_Taken)     // Selection signal: branch taken or not
-    );
+// clk, reset, PC, IR, is_Branch_Taken, branchPC, output_IF_PC)
+module pipeline_top_module (
+input clk,                  // TWO PHASE CLK
+output reg reset,
+output reg [9:0] PC,           // PROGRAM COUNTER
+output wire [31:0] IR,          // INSTRUCTION REGISTER
+output reg is_Branch_Taken,  // TO DISABLE INSTRUCTION AFTER BRANCH
+output reg [9:0] branchPC,
+output wire[9:0] output_IF_PC,
+output wire [31:0] Input_OF_IR, 
+output wire isStore,
+output wire isImmendiate,
+output wire isReturn,
+output wire [9:0] input_OF_PC,
+output wire [9:0] output_OF_PC,
+output wire [31:0] branchTarget,
+output wire [31:0] Operand_A,
+output wire [31:0] Operand_B,
+output wire [31:0] Operand_2,
+output wire [31:0] output_OF_IR
+);
+// reg [31:0] OF_IR;
 
 
 
-    // Register file signals
-    wire [31:0] rdData1, rdData2;
-    reg [31:0] wrData;
-    reg [3:0] op1, op2, dReg;
-    reg writeEnable;
-    reg reset;
-
-    // Instantiate the register file
-    registerFile regfile(
-        .rdData1(rdData1), 
-        .rdData2(rdData2), 
-        .wrData(wrData), 
-        .op1(op1), 
-        .op2(op2), 
-        .dReg(dReg), 
-        .writeEnable(writeEnable), 
-        .reset(reset), 
-        .clk(clk)
-    );
-
-    // Memory signals and instantiation
-    wire [31:0] instruction;
-    // reg [7:0] memory [0:1023];
-    reg [9:0] address;
-    reg writeEnableMem;
-    reg [31:0] writeDataMem;
-    
-    // Byte-addressable memory instantiated
-    memory mem(
-        .instruction(instruction),
-        .address(address),
+    IF_cycle iFetch(
         .clk(clk),
-        .writeEnable(writeEnableMem),
-        .writeData(writeDataMem)
+        .reset(reset),
+        .inputPC(PC),
+        .IR(IR),
+        .is_Branch_Taken(is_Branch_Taken),
+        .branchPC(branchPC),
+        .outputPC(output_IF_PC)
     );
 
+    IF_OF_Latch  latch_if_of(
+        .clk(clk),
+        .output_IF_PC(output_IF_PC),
+        .IF_instruction(IR),
+        .Input_OF_PC(input_OF_PC),
+        .OF_instruction(Input_OF_IR)
+    );
 
-// ********************  INITIALIZATION  ********************
-initial begin
-    PC = 0;                 // Initialize PC to 0
-    branchPC = 0;           // Initialize branchPC to 0
-    is_Branch_Taken = 0;    // Initialize is_Branch_Taken to 0
-    HALTED=0;
-end
-
-    // ********************  INSTRUCTION FETCH STAGE  ********************
-    always @(negedge clk) begin
-        if(!HALTED) begin
-        // Fetch the instruction from memory at the new PC address
-                IR  <= { mem.memory[PC + 3],   // Most significant byte (MSB)
-                         mem.memory[PC + 2], 
-                         mem.memory[PC + 1], 
-                         mem.memory[PC] };    // Least significant byte (LSB)
-        
-        PC <= nextPC;
-        end
+    OF_stage OperandFetch(
+    .clk(clk),
+    .Input_OF_PC(input_OF_PC),
+    .Input_OF_IR(Input_OF_IR),
+    .isStore(isStore),
+    .isReturn(isReturn),
+    .isImmendiate(isImmendiate),
+    .output_OF_PC(output_OF_PC),
+    .branchTarget(branchTarget),
+    .Operand_A(Operand_A),
+    .Operand_B(Operand_B),
+    .Operand_2(Operand_2),
+    .output_OF_IR(output_OF_IR)
+);
+// reg [9:0] delayed_IF_PC;
+        // Initialize signals in an always block
+    initial begin
+        reset = 1;                 // Start with reset active
+        // PC = 10'b0; 
+        is_Branch_Taken = 1'b0;
+        branchPC = 10'b0;
+        #2
+        reset = 0;               // Initialize Program Counter
 
     end
+    // always @(negedge clk) begin
+    //     if (reset)
+    //         delayed_IF_PC <= 10'b0;
+    //     else
+    //         delayed_IF_PC <= output_IF_PC;  // Delay the PC for 1 cycle
+    // end
 
+    //     #2
+    //     // $display("Hello World  PC %d",output_IF_PC);
+    //     // if(output_IF_PC == 10'b0000001100)begin
+    //     //     assign is_Branch_Taken =1'b1;
+    //     //     assign branchPC = 10'b0000011100;
+    //     //     #5
+    //     //     assign is_Branch_Taken =1'b0;
+        
+    //     // end
+    //     $display("Instruction: %b at PC: %d",IR[25:14],output_IF_PC);
+        
+    // end
 
 endmodule
+
+
+
+
+// // reg [31:0] instruction;
+
+// // parameter ADD =5'b00000,SUB=5'b00001,MUL = 5'b00010, DIV=5'b00011,
+// // MOD=5'b00100,CMP=5'b00101,AND=5'b00110,OR=5'b00111,NOT=5'b01000,MOV=5'b01001,LSL=5'b01010,LSR=5'b01011,
+// // ASR=5'b01100,NOP=5'b01101,LD=5'b01110,ST=5'b01111,BEQ=5'b10000,BGT=5'b10001,B=5'b10010,CALL=5'b10011, RET=5'b10100;
+// reg HALTED;

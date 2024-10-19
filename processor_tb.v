@@ -3,60 +3,69 @@
 module testbench;
 
     reg clk;                           // Clock signal
-    reg reset;                         // Reset signal
-    reg [7:0] memory [0:1023];        // Memory for loading instructions
-    integer i;                         // Loop variable for loading instructions
-    integer fd;                        // File descriptor for reading the hex file
-    reg [31:0] instruction;            // Variable to hold each instruction
+    wire reset;                         // Reset signal
+    // integer i;                         // Loop variable for loading instructions
+    // integer fd;                        // File descriptor for reading the hex file
+    // wire [31:0] instruction;            // Variable to hold each instruction
+    // reg [31:0] writeInstruction;
+    // reg [9:0] address;                 // Memory address
+    // reg writeEnable;                   // Write enable signal for memory
+    // reg [31:0] instructionMemory[0:1023];
+ wire [9:0] PC;           // PROGRAM COUNTER
+ wire [31:0] IR;          // INSTRUCTION REGISTER
+ wire is_Branch_Taken;  // TO DISABLE INSTRUCTION AFTER BRANCH
+ wire [9:0] branchPC;
+ wire[9:0] outputPC;
+output wire isStore;
+output wire isImmendiate;
+output wire isReturn;
+wire [9:0] input_OF_PC;
+wire [9:0] output_OF_PC;
+wire [31:0] branchTarget;
+wire [31:0] Operand_A;
+wire [31:0] Operand_B;
+wire [31:0] Operand_2;
+wire [31:0] Input_OF_IR;
+wire [31:0] output_OF_IR;
 
-    // Instantiate the pipeline_RISCV module
-    pipeline_RISCV uut (
-        .clk(clk)
-    );
+    pipeline_top_module processor(
+    .clk(clk),
+    .reset(reset),
+    .PC(PC),
+    .IR(IR), 
+    .is_Branch_Taken(is_Branch_Taken),
+    .branchPC(branchPC),
+    .output_IF_PC(outputPC),
+    .isStore(isStore),
+    .isReturn(isReturn),
+    .isImmendiate(isImmendiate),
+    .input_OF_PC(input_OF_PC),
+    .output_OF_PC(output_OF_PC),
+    .branchTarget(branchTarget),
+    .Operand_A(Operand_A),
+    .Operand_B(Operand_B),
+    .Operand_2(Operand_2),
+    .Input_OF_IR(Input_OF_IR),
+    .output_OF_IR (output_OF_IR)              
+   );
 
     // Generate a clock signal
     initial begin
-        clk = 0;                       // Initialize clock to 0
+        clk = 1;                       // Initialize clock to 0
         forever #5 clk = ~clk;         // Toggle clock every 5 ns
     end
-
-    // Load instructions from .hex file into memory
+ 
     initial begin
-        // Initialize reset signal
-        reset = 1;                     // Assert reset
-        #10 reset = 0;                 // Release reset after 10 ns
+        $dumpfile("processor.vcd");
+        $dumpvars(0, testbench);
 
-        // Open the .hex file for reading
-        fd = $fopen("instructions.hex", "r");
-        if (fd == 0) begin
-            $display("Error: Could not open instructions.hex");
-            $finish;
-        end
-
-        // Load instructions from the hex file
-        for (i = 0; i < 12; i = i + 1) begin
-            // Read a 32-bit instruction as a hex value
-            if ($fscanf(fd, "%h\n", instruction) == 1) begin
-                // Store each byte in little-endian format
-                memory[i*4]     = instruction[7:0];   // Least significant byte
-                memory[i*4 + 1] = instruction[15:8];  // Second byte
-                memory[i*4 + 2] = instruction[23:16]; // Third byte
-                memory[i*4 + 3] = instruction[31:24]; // Most significant byte
-                $display(" Index %d: Insruction hexadeimal format is: %h  ",i,{memory[i*4 + 3],memory[i*4 + 2],memory[i*4 + 1],memory[i*4]});
-                $display(" Index %d: Insruction hexadeimal format is: %b",i,{memory[i*4 + 3],memory[i*4 + 2],memory[i*4 + 1],memory[i*4]});
-            end else begin
-                $display("Error: Not enough instructions in instructions.hex");
-                // break;
-            end
-        end
-        $fclose(fd); // Close the file after loading
     end
 
-    
     // Simulate for a specific duration and then finish
     initial begin
-        #2000;                          // Run simulation for 2000 ns
-        $finish;                        // End simulation
-    end
+        #100;            
+        $finish; 
+
+    end                       
 
 endmodule
