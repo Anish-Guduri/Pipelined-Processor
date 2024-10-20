@@ -56,12 +56,8 @@ output wire [31:0] Operand_EX_2,
 output wire [31:0]input_EX_IR
 );
 reg [31:0] OF_IR;
-// wire isSt;
-
 wire isBeq;
 wire isBgt;
-// wire isRet;
-// wire isImmx;
 wire isWb;    
 wire isUbranch;
 wire isCall;
@@ -172,8 +168,7 @@ OF_EX_Latch of_ex_latch(
     );
         // Initialize signals in an always block
 initial begin
-        reset = 1;                 // Start with reset active
-        // PC = 10'b0; 
+        reset = 1;                 // Start with reset active 
         is_Branch_Taken = 1'b0;
         branchPC = 10'b0;
         // isStore = 4'b0;
@@ -183,9 +178,7 @@ initial begin
         reset = 0;               // Initialize Program Counter
 
     end
-always @(output_OF_PC) begin
-    $display("Hello World  PC %d",output_OF_PC);
-end
+
  
 endmodule
 
