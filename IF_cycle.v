@@ -42,7 +42,7 @@ module IF_cycle(
             address <= PC;        // Set address based on mux output;
             outputPC<=PC;
             PC <=  mux_nextPC;     // Increment PC
-             $display("Instruction: %B at PC: %d",IR,outputPC);
+            // $display("PC: %d Instruction: %h ",outputPC, IR);
         end
     end
 endmodule
