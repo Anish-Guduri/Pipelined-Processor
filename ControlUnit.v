@@ -1,32 +1,39 @@
 module Control_Unit(
     input  [31:0] Input_OF_IR,
-    output reg isSt,
-    output reg isLd,
-    output reg isBeq,
-    output reg isBgt,
-    output reg isRet,
-    output reg isImmendiate,
-    output reg isWb,    
-    output reg isUbranch,
-    output reg isCall,
-    output reg isAdd,
-    output reg isSub,
-    output reg isCmp,
-    output reg isMul,
-    output reg isDiv,
-    output reg isMod,
-    output reg isLsl,
-    output reg isLsr,
-    output reg isAsr,
-    output reg isOr,
-    output reg isAnd,
-    output reg isNot,
-    output reg isMov
+    input reset,
+    output reg[21:0] controlBus
 );
 
 reg op1,op2,op3,op4,op5;
 reg I;
-    always @(Input_OF_IR) begin
+reg isSt;
+reg isLd;
+reg isBeq;
+reg isBgt;
+reg isRet;
+reg isImmediate;
+reg isWb;    
+reg isUbranch;
+reg isCall;
+reg isAdd;
+reg isSub;
+reg isCmp;
+reg isMul;
+reg isDiv;
+reg isMod;
+reg isLsl;
+reg isLsr;
+reg isAsr;
+reg isOr;
+reg isAnd;
+reg isNot;
+reg isMov;
+
+    always @( posedge reset) begin
+        controlBus <=22'B0;
+    end
+
+    always @(*) begin
         I    <=Input_OF_IR[26];
         op1  <=Input_OF_IR[27];
         op2  <=Input_OF_IR[28];
@@ -39,7 +46,7 @@ reg I;
         isBeq <= ( op5 & (~op4) & (~op3) & (~op2) & (~op1) );
         isBgt <= ( op5 & (~op4) & (~op3) & (~op2) & op1 );
         isRet <= ( op5 & (~op4) & op3 & (~op2) & (~op1) );
-        isImmendiate <= I;
+        isImmediate <= I;
         isWb <= (~( op5 |((~op5)&op3&op1&(op4 | (~op2)))  )) | ( op5 & (~op4) & (~op3) & op2 & op1 );
         isUbranch <= ( op5 & (~op4)) & (((~op3)&op2) | (op3 &(~op2)&(~op1))) ;
         isCall <= ( op5 & (~op4) & (~op3) & op2 & op1 );
@@ -57,7 +64,38 @@ reg I;
         isOr <= ( (~op5) & (~op4) & op3 & op2 & op1 );
         isAnd <= ( (~op5) & (~op4) & op3 & op2 & (~op1) );
         isNot <= ( (~op5) & op4 & (~op3) & (~op2) & (~op1) );
-        isMov <= ( (~op5) & op4 & (~op3) & (~op2) & op1 );        
+        isMov <= ( (~op5) & op4 & (~op3) & (~op2) & op1 ); 
+
+        // controlBus <={isSt,isLd, isBeq, isBgt, isRet, isImmediate, isWb, isUbranch, isCall,isAdd,isSub,isCmp,isMul,isDiv,isMod,isLsl,isLsr,isAsr,isOr,isAnd,isNot,isMov};       
+        controlBus <= {isMov, isNot, isAnd, isOr, isAsr, isLsr, isLsl, isMod, isDiv, isMul, isCmp, isSub, isAdd, isCall, isUbranch, isWb, isImmediate, isRet, isBgt, isBeq, isLd, isSt};
+
 end
 
 endmodule
+
+
+// controlBus <={isSt,isLd, isBeq, isBgt, isRet, isImmediate, isWb, isUbranch, isCall,isAdd,isSub,isCmp,isMul,isDiv,isMod,isLsl,isLsr,isAsr,isOr,isAnd,isNot,isMov};       
+
+
+// isSt = 0;
+// isLd = 1;
+// isBeq = 2;
+// isBgt = 3;
+// isRet = 4;
+// isImmediate = 5;
+// isWb = 6;    
+// isUbranch = 7;
+// isCall = 8;
+// isAdd = 9;
+// isSub = 10;
+// isCmp = 11;
+// isMul = 12;
+// isDiv = 13;
+// isMod = 14;
+// isLsl = 15;
+// isLsr = 16;
+// isAsr = 17;
+// isOr = 18;
+// isAnd = 19;
+// isNot = 20;
+// isMov = 21;

@@ -11,18 +11,13 @@ module testbench;
     // reg [9:0] address;                 // Memory address
     // reg writeEnable;                   // Write enable signal for memory
     // reg [31:0] instructionMemory[0:1023];
-wire [9:0] PC;           // PROGRAM COUNTER
+wire [31:0] PC;           // PROGRAM COUNTER
 wire [31:0] IR;          // INSTRUCTION REGISTER
 wire is_Branch_Taken;  // TO DISABLE INSTRUCTION AFTER BRANCH
-wire [9:0] branchPC;
-wire[9:0] outputPC;
-wire isStore;
-wire isImmendiate;
-wire isReturn;
-wire isMov;
-wire isLd;
-wire [9:0] input_OF_PC;
-wire [9:0] output_OF_PC;
+wire [31:0] branchPC;
+wire[31:0] outputPC;
+wire [31:0] input_OF_PC;
+wire [31:0] output_OF_PC;
 wire [31:0] branchTarget;
 wire [31:0] Operand_A;
 wire [31:0] Operand_B;
@@ -31,12 +26,21 @@ wire [31:0] Input_OF_IR;
 wire [31:0] output_OF_IR;
 wire [3:0] isStore_result;
 wire [3:0] isReturn_result;
-wire [9:0] input_EX_PC;
+wire [31:0] input_EX_PC;
 wire [31:0] EX_branchTarget;
 wire [31:0] Operand_EX_A;
 wire [31:0] Operand_EX_B;
 wire [31:0] Operand_EX_2;
 wire [31:0] input_EX_IR;
+wire [21:0] Input_OF_controlBus;
+wire [21:0] Output_OF_controlBus;
+wire [21:0] Input_EX_controlBus;
+wire [31:0] output_EX_PC;
+wire [31:0] ALU_Result;
+wire [31:0] EX_op2;
+wire [31:0] output_EX_IR;
+wire [21:0] output_EX_controlBus;       
+
 
     pipeline_top_module processor(
     .clk(clk),
@@ -46,11 +50,6 @@ wire [31:0] input_EX_IR;
     .is_Branch_Taken(is_Branch_Taken),
     .branchPC(branchPC),
     .output_IF_PC(outputPC),
-    .isSt(isStore),
-    .isRet(isReturn),
-    .isMov(isMov),
-    .isLd(isLd),
-    .isImmendiate(isImmendiate),
     .input_OF_PC(input_OF_PC),
     .output_OF_PC(output_OF_PC),
     .branchTarget(branchTarget),
@@ -66,7 +65,15 @@ wire [31:0] input_EX_IR;
     .Operand_EX_A(Operand_EX_A),
     .Operand_EX_B(Operand_EX_B),
     .Operand_EX_2(Operand_EX_2),
-    .input_EX_IR(input_EX_IR)        
+    .input_EX_IR(input_EX_IR),
+    .Input_OF_controlBus(Input_OF_controlBus),
+    .Input_EX_controlBus(Input_EX_controlBus),
+    .Output_OF_controlBus(Output_OF_controlBus),
+    .output_EX_PC(output_EX_PC),
+    .ALU_Result(ALU_Result),
+    .EX_op2(EX_op2),
+    .output_EX_IR(output_EX_IR),
+    .output_EX_controlBus(output_EX_controlBus)
    );
 
     // Generate a clock signal

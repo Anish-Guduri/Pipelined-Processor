@@ -1,85 +1,11 @@
-// // module InstructionMemory(address,instruction);
-// // input [9:0] address;            // 10-bit memory address
-// // output reg [31:0] instruction;    // 32-bit instruction output
-
-// //     // reg [31:0] instructionMemory[0:1023];         // Byte-addressable memory (1024 bytes)
-// //      reg [7:0] instructionMemory[0:4095];
-
-// //     initial begin
-// //     $readmemh("instructions.hex", instructionMemory);
-// //     // $display("Adddress is %d", address);
-// //     $display("Instruction: %h at 0: ",{instructionMemory[3],instructionMemory[2],instructionMemory[1],instructionMemory[0]});
-// //     end 
-// //      always @( address) begin
-// //         // instruction <= instructionMemory[address];
-// //          instruction <= {instructionMemory[address + 3],      // Most significant byte (MSB)
-// //                          instructionMemory[address + 2],      // Next byte
-// //                          instructionMemory[address + 1],      // Next byte
-// //                          instructionMemory[address]};         // Least significant byte (LSB)
-
-// //      end   
-// // endmodule
-
-
-// module InstructionMemory(
-//     input [9:0] address,             // 10-bit byte memory address (byte-addressable PC)
-//     output reg [31:0] instruction     // 32-bit instruction output
-// );
-
-//     reg [7:0] instructionMemory [0:4095];  // Byte-addressable memory (4KB for 32-bit instructions)
-    
-//     // Temporary variables for file handling
-//     integer file, readResult, i;
-//     reg [31:0] temp;  // Temporary register to hold each instruction
-
-//     initial begin
-//         // Open the hex file for reading
-//         file = $fopen("instructions.hex", "r");
-//         if (file == 0) begin
-//             $display("Error: Could not open file.");
-//             $finish; // Stop simulation if file opening fails
-//         end
-
-//         // Read instructions from the file and store them in memory
-        
-//         for (i = 0; i < 1024; i = i + 1) begin
-//             readResult = $fscanf(file, "%h\n", temp); // Read a 32-bit hex value
-//             if (readResult != 1) begin
-//                 $display("Error reading instruction at index %0d", i);
-//                 $finish; // Stop simulation if reading fails
-//             end
-            
-//             // Store it in little-endian format in byte-addressable memory
-//             instructionMemory[i*4]     = temp[7:0];    // Least significant byte (LSB)
-//             instructionMemory[i*4 + 1] = temp[15:8];
-//             instructionMemory[i*4 + 2] = temp[23:16];
-//             instructionMemory[i*4 + 3] = temp[31:24];  // Most significant byte (MSB)
-//         end
-
-//         // Close the file
-//         $fclose(file);
-
-//         // Debug display: show the first instruction in memory
-//         $display("Instruction at address 0 (little-endian): %h", {instructionMemory[3], instructionMemory[2], instructionMemory[1], instructionMemory[0]});
-//     end
-
-//     // Fetch the 32-bit instruction by combining 4 consecutive bytes (little-endian)
-//     always @(address) begin
-//         instruction <= {instructionMemory[address + 3],      // Most significant byte (MSB)
-//                         instructionMemory[address + 2],      // Next byte
-//                         instructionMemory[address + 1],      // Next byte
-//                         instructionMemory[address]};         // Least significant byte (LSB)
-//     end
-
-// endmodule
 
 module InstructionMemory(
-    input [9:0] address,             // 10-bit byte memory address (byte-addressable PC)
+    input [31:0] address,             // 10-bit byte memory address (byte-addressable PC)
     output reg [31:0] instruction     // 32-bit instruction output
 );
 
     reg [7:0] instructionMemory [0:4095];  // Byte-addressable memory (4KB for 32-bit instructions)
-    
+    // reg [7:0] instructionMemory [0:4294967295];
     // Temporary variables for file handling
     integer file, readResult;
     reg [31:0] temp;  // Temporary register to hold each instruction
