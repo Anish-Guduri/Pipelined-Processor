@@ -76,7 +76,7 @@ module OF_stage(
 
 
 
-            // $display(" isStore  %d, isReturn  %d", isStore_result, isReturn_result);
+            // $display(" isStore  %d, isReturn  %d isImmediate %d", isStore, isReturn ,isImmediate);
             // $display("rs1 value: %d rs2 value %d ",Operand_A,Operand_B);  
     end
 

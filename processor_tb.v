@@ -39,7 +39,12 @@ wire [31:0] output_EX_PC;
 wire [31:0] ALU_Result;
 wire [31:0] EX_op2;
 wire [31:0] output_EX_IR;
-wire [21:0] output_EX_controlBus;       
+wire [21:0] output_EX_controlBus;
+wire [31:0] input_MA_PC;
+wire [31:0] input_MA_ALU_Result;
+wire [31:0] input_MA_op2;
+wire [31:0] input_MA_IR;
+wire [21:0] input_MA_controlBus;       
 
 
     pipeline_top_module processor(
@@ -73,7 +78,13 @@ wire [21:0] output_EX_controlBus;
     .ALU_Result(ALU_Result),
     .EX_op2(EX_op2),
     .output_EX_IR(output_EX_IR),
-    .output_EX_controlBus(output_EX_controlBus)
+    .output_EX_controlBus(output_EX_controlBus),
+    .input_MA_PC(input_MA_PC),
+    .input_MA_ALU_Result(input_MA_ALU_Result),
+    .input_MA_op2(input_MA_op2),
+    .input_MA_IR(input_MA_IR),
+    .input_MA_controlBus(input_MA_controlBus)
+    
    );
 
     // Generate a clock signal

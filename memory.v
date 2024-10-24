@@ -1,42 +1,45 @@
 module memory(
     input clk,
-    output reg [31:0] instruction,    // 32-bit instruction output
-    input [9:0] address,              // 10-bit memory address
+    input reset,
+    output reg [31:0] readData,    // 32-bit instruction output
+    input [31:0] address,              // 10-bit memory address
     input writeEnable,                // Write enable signal
     input [31:0] writeData            // 32-bit data to be written to memory
 );
-    reg [7:0] memory[0:1023];         // Byte-addressable memory (1024 bytes)
+    reg [7:0] memory[0:536870912];         // Byte-addressable memory (1024 bytes)
     integer i;
     // Always read from memory
     // $display("Address: %b and value write Data:%b " ,address, writeData);
 
     always @(negedge clk) begin
-        instruction <= { memory[address + 3],    // MSB
+        readData    <= { memory[address + 3],    // MSB
                          memory[address + 2], 
                          memory[address + 1], 
                          memory[address] };      // LSB
+        // $display("address %d : ReadData:%d", address, readData ); 
     end
 
     // Perform write operation whenever writeEnable is high
     always @(negedge clk) begin
         if (writeEnable) begin
-            // $display("Instruction %d : writeData:%h", address, writeData ); 
+            // $display("WriteEnable %b , writeData %d address %h" ,writeEnable ,writeData , address); 
             memory[address]     <= writeData[7:0];     // Write LSB to memory[address]
             memory[address + 1] <= writeData[15:8];    // Write next byte
             memory[address + 2] <= writeData[23:16];   // Write next byte
             memory[address + 3] <= writeData[31:24];   // Write MSB
-            
+            #1
+            $display("address %d   | memory value: %d", address,{memory[address + 3],memory[address + 2],memory[address + 1], memory[address] }); 
             // $display("Instruction: writeData:%h",memory[7:0]);
         end
     end
-    // initial begin
-    //     #200
-    //     i=0;
-    //     while(i<34) begin
-    //         $display(" %d, Hello Memory %h", i, memory[i]);
-    //         i=i+1;      
-    //     end
-    // end
+    always @(posedge reset) begin
+        // #200
+        i=0;
+        while(i<4000) begin
+            memory[i] <= 0;
+            i=i+1;      
+        end
+    end
 endmodule
 
 

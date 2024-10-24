@@ -71,9 +71,9 @@ always @(*) begin
     else if (isMov) begin
         EX_ALU_Result = Operand_EX_B;                 // Move operation
     end
-    else begin
-        EX_ALU_Result = 32'b0; // Default case for invalid operations
-    end
+    // else begin
+    //     EX_ALU_Result = 32'b0; // Default case for invalid operations
+    // end
 end
 
 endmodule

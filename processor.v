@@ -27,6 +27,8 @@ no-bonus version.
 `include "ALU_cycle.v"
 `include "branchUnit.v"
 `include "ALU_Module.v"
+`include "EX_MA_Latch.v"
+`include "MA_Cycle.v"
 
 
 module pipeline_top_module(
@@ -64,8 +66,27 @@ output wire [31:0] EX_op2,
 output wire [31:0] output_EX_IR,
 output wire [21:0] output_EX_controlBus,
 output wire [31:0] EX_branchPC,
-output wire EX_is_Branch_Taken
+output wire EX_is_Branch_Taken,
+output wire [31:0] input_MA_PC,
+output wire [31:0] input_MA_ALU_Result,
+output wire [31:0] input_MA_op2,
+output wire [31:0] input_MA_IR,
+output wire [21:0] input_MA_controlBus,
+output wire [31:0] output_MA_PC,
+output wire [31:0] output_MA_ALU_Result,
+output wire [31:0] output_MA_IR,
+output wire [21:0] output_MA_controlBus,
+output wire [31:0] MA_Ld_Result,
+output wire [31:0] MDR,
+output wire [31:0] readData,
+output wire [31:0] address,
+output wire writeEnable,
+output wire [31:0] writeData,
+output wire MA_writeEnable
+
 );
+
+
 reg [31:0] OF_IR;
 
 
@@ -80,6 +101,17 @@ reg [31:0] OF_IR;
     .rdData2(op2),
     .op1(isReturn_result),
     .op2(isStore_result)
+    );
+
+
+    memory data_memory(
+        .clk(clk),
+        .reset(reset),
+        .readData(readData),
+        .writeEnable(MA_writeEnable),
+        .address(output_MA_ALU_Result),
+        .writeData(MDR)
+
     );
 
 
@@ -160,6 +192,37 @@ ALU_Stage ALU_cycle(
     .output_EX_controlBus(output_EX_controlBus),
     .EX_branchPC(branchPC),
     .EX_is_Branch_Taken(is_Branch_Taken)
+);
+
+
+EX_MA_Latch  ex_ma_latch(
+.clk(clk),
+.output_EX_PC(output_EX_PC),
+.ALU_Result(ALU_Result),
+.EX_op2(EX_op2),
+.output_EX_IR(output_EX_IR),
+.output_EX_controlBus(output_EX_controlBus),
+.input_MA_PC(input_MA_PC),
+.input_MA_ALU_Result(input_MA_ALU_Result),
+.input_MA_op2(input_MA_op2),
+.input_MA_IR(input_MA_IR),
+.input_MA_controlBus(input_MA_controlBus)
+
+);
+MA_stage MA_cycle(
+.input_MA_PC(input_MA_PC),
+.input_MA_ALU_Result(input_MA_ALU_Result),
+.input_MA_op2(input_MA_op2),
+.input_MA_IR(input_MA_IR),
+.input_MA_controlBus(input_MA_controlBus),
+.output_MA_PC(output_MA_PC),
+.output_MA_ALU_Result(output_MA_ALU_Result),
+.output_MA_IR(output_MA_IR),
+.output_MA_controlBus(output_MA_controlBus),
+.MA_Ld_Result(MA_Ld_Result),
+.MDR(MDR),
+.MA_writeEnable(MA_writeEnable)
+
 );
 
 

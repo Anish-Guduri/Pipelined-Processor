@@ -47,12 +47,12 @@ reg isMov;
         isBgt <= ( op5 & (~op4) & (~op3) & (~op2) & op1 );
         isRet <= ( op5 & (~op4) & op3 & (~op2) & (~op1) );
         isImmediate <= I;
-        isWb <= (~( op5 |((~op5)&op3&op1&(op4 | (~op2)))  )) | ( op5 & (~op4) & (~op3) & op2 & op1 );
-        isUbranch <= ( op5 & (~op4)) & (((~op3)&op2) | (op3 &(~op2)&(~op1))) ;
+        isWb <= (~( op5 ||((~op5)&op3&op1&(op4 || (~op2)))  )) || ( op5 & (~op4) & (~op3) & op2 & op1 );
+        isUbranch <= ( op5 & (~op4)) & (((~op3)&op2) || (op3 &(~op2)&(~op1))) ;
         isCall <= ( op5 & (~op4) & (~op3) & op2 & op1 );
         
         // ALU signals
-        isAdd <= ( (~op5) & (~op4) & (~op3) & (~op2) & (~op1) ) | ( (~op5) & op4 & op3 & op2 & op1 );
+        isAdd <= ( (~op5) & (~op4) & (~op3) & (~op2) & (~op1) ) || ( (~op5) & op4 & op3 & op2);
         isSub <= ( (~op5) & (~op4) & (~op3) & (~op2) & op1 );
         isCmp <= ( (~op5) & (~op4) & op3 & (~op2) & op1 );
         isMul <= ( (~op5) & (~op4) & (~op3) & op2 & (~op1) );
