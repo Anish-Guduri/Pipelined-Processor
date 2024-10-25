@@ -4,6 +4,7 @@ module MA_stage(
     input [31:0] input_MA_op2,
     input [31:0] input_MA_IR,
     input [21:0] input_MA_controlBus,
+    input [31:0] readData,
     output reg [31:0] output_MA_PC,
     output reg [31:0] output_MA_ALU_Result,
     output reg [31:0] output_MA_IR,
@@ -31,7 +32,8 @@ module MA_stage(
        output_MA_ALU_Result <=input_MA_ALU_Result;
        output_MA_IR <= input_MA_IR;
        output_MA_controlBus <= input_MA_controlBus;
-
+       MA_Ld_Result <= readData;
+        $display("Read Data %d  |  MA LD_result %d | MAR %d", readData, MA_Ld_Result, MAR);
     end
     // initial begin
     //     MA_writeEnable <=1'b0;

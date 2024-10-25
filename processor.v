@@ -29,6 +29,7 @@ no-bonus version.
 `include "ALU_Module.v"
 `include "EX_MA_Latch.v"
 `include "MA_Cycle.v"
+`include "MA_RW_latch.v"
 
 
 module pipeline_top_module(
@@ -82,7 +83,12 @@ output wire [31:0] readData,
 output wire [31:0] address,
 output wire writeEnable,
 output wire [31:0] writeData,
-output wire MA_writeEnable
+output wire MA_writeEnable,
+output wire [31:0] input_RW_PC,
+output wire [31:0] input_RW_Ld_Result,
+output wire [31:0] input_RW_ALU_Result,
+output wire [31:0] input_RW_IR,
+output wire [21:0] input_RW_controlBus
 
 );
 
@@ -215,6 +221,7 @@ MA_stage MA_cycle(
 .input_MA_op2(input_MA_op2),
 .input_MA_IR(input_MA_IR),
 .input_MA_controlBus(input_MA_controlBus),
+.readData(readData),
 .output_MA_PC(output_MA_PC),
 .output_MA_ALU_Result(output_MA_ALU_Result),
 .output_MA_IR(output_MA_IR),
@@ -224,6 +231,21 @@ MA_stage MA_cycle(
 .MA_writeEnable(MA_writeEnable)
 
 );
+
+MA_RW_Latch ma_ra_latch(
+    .clk(clk),
+    .output_MA_PC(output_MA_PC),
+    .output_MA_ALU_Result(output_MA_ALU_Result),
+    .output_MA_IR(output_MA_IR),
+    .output_MA_controlBus(output_MA_controlBus),
+    .MA_Ld_Result(MA_Ld_Result),
+    .input_RW_PC(input_RW_PC),
+    .input_RW_Ld_Result(input_RW_Ld_Result),
+    .input_RW_ALU_Result(input_RW_ALU_Result),
+    .input_RW_IR(input_RW_IR),
+    .input_RW_controlBus(input_RW_controlBus)
+);
+
 
 
 

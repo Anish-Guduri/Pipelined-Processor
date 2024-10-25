@@ -44,8 +44,20 @@ wire [31:0] input_MA_PC;
 wire [31:0] input_MA_ALU_Result;
 wire [31:0] input_MA_op2;
 wire [31:0] input_MA_IR;
-wire [21:0] input_MA_controlBus;       
-
+wire [31:0] output_MA_PC;
+wire [31:0] output_MA_IR;
+wire [31:0] MA_Ld_Result;
+wire [31:0] MDR;
+wire [21:0] input_MA_controlBus;
+wire [31:0] output_MA_ALU_Result;
+wire [21:0] output_MA_controlBus;
+wire [31:0] readData;       
+wire MA_writeEnable;
+wire [31:0] input_RW_PC;
+wire [31:0] input_RW_Ld_Result;
+wire [31:0] input_RW_ALU_Result;
+wire [31:0] input_RW_IR;
+wire [21:0] input_RW_controlBus;
 
     pipeline_top_module processor(
     .clk(clk),
@@ -83,7 +95,19 @@ wire [21:0] input_MA_controlBus;
     .input_MA_ALU_Result(input_MA_ALU_Result),
     .input_MA_op2(input_MA_op2),
     .input_MA_IR(input_MA_IR),
-    .input_MA_controlBus(input_MA_controlBus)
+    .input_MA_controlBus(input_MA_controlBus),
+    .output_MA_PC(output_MA_PC),
+    .output_MA_ALU_Result(output_MA_ALU_Result),
+    .output_MA_IR(output_MA_IR),
+    .output_MA_controlBus(output_MA_controlBus),
+    .MA_Ld_Result(MA_Ld_Result),
+    .MDR(MDR),
+    .MA_writeEnable(MA_writeEnable),
+    .input_RW_PC(input_RW_PC),
+    .input_RW_Ld_Result(input_RW_Ld_Result),
+    .input_RW_ALU_Result(input_RW_ALU_Result),
+    .input_RW_IR(input_RW_IR),
+    .input_RW_controlBus(input_RW_controlBus)
     
    );
 
@@ -101,7 +125,7 @@ wire [21:0] input_MA_controlBus;
 
     // Simulate for a specific duration and then finish
     initial begin
-        #150;            
+        #250;            
         $finish; 
 
     end                       

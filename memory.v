@@ -16,7 +16,7 @@ module memory(
                          memory[address + 2], 
                          memory[address + 1], 
                          memory[address] };      // LSB
-        // $display("address %d : ReadData:%d", address, readData ); 
+         $display("address %d : ReadData:%d", address, readData ); 
     end
 
     // Perform write operation whenever writeEnable is high
@@ -27,8 +27,8 @@ module memory(
             memory[address + 1] <= writeData[15:8];    // Write next byte
             memory[address + 2] <= writeData[23:16];   // Write next byte
             memory[address + 3] <= writeData[31:24];   // Write MSB
-            #1
-            $display("address %d   | memory value: %d", address,{memory[address + 3],memory[address + 2],memory[address + 1], memory[address] }); 
+            // #1
+            // $display("address %d   | memory value: %d", address,{memory[address + 3],memory[address + 2],memory[address + 1], memory[address] }); 
             // $display("Instruction: writeData:%h",memory[7:0]);
         end
     end
