@@ -13,8 +13,10 @@ Version 3: Verilog/VHDL: 140%, bonus allowed. No synthesis in the
 no-bonus version.
 */
 // clk, reset, PC, IR, is_Branch_Taken, branchPC, output_IF_PC)
-`include "registerFile.v"
+
+`include "./registerFile.v"
 `include "mux_2x1.v"
+`include "mux_3x1.v"
 `include "memory.v"
 `include "IF_cycle.v"
 `include "instructionMemory.v"
@@ -30,6 +32,8 @@ no-bonus version.
 `include "EX_MA_Latch.v"
 `include "MA_Cycle.v"
 `include "MA_RW_latch.v"
+`include "RW_Cycle.v"
+
 
 
 module pipeline_top_module(
@@ -88,7 +92,11 @@ output wire [31:0] input_RW_PC,
 output wire [31:0] input_RW_Ld_Result,
 output wire [31:0] input_RW_ALU_Result,
 output wire [31:0] input_RW_IR,
-output wire [21:0] input_RW_controlBus
+output wire [21:0] input_RW_controlBus,
+output wire [31:0] RW_Data_value,
+output wire [3:0] RW_rd,
+output wire RW_isWb,
+output wire[31:0] output_register_file
 
 );
 
@@ -106,7 +114,11 @@ reg [31:0] OF_IR;
     .rdData1(op1),
     .rdData2(op2),
     .op1(isReturn_result),
-    .op2(isStore_result)
+    .op2(isStore_result),
+    .writeEnable(RW_isWb),
+    .wrData(RW_Data_value),
+    .dReg(RW_rd),
+    .output_register_file(output_register_file)
     );
 
 
@@ -246,7 +258,16 @@ MA_RW_Latch ma_ra_latch(
     .input_RW_controlBus(input_RW_controlBus)
 );
 
-
+RW_stage rw_stage(
+    .input_RW_PC(input_RW_PC),
+    .input_RW_Ld_Result(input_RW_Ld_Result),
+    .input_RW_ALU_Result(input_RW_ALU_Result),
+    .input_RW_IR(input_RW_IR),
+    .input_RW_controlBus(input_RW_controlBus),
+    .RW_Data_value(RW_Data_value),
+    .RW_isWb(RW_isWb),
+    .RW_rd(RW_rd)
+);
 
 
 
@@ -264,59 +285,3 @@ initial begin
  
 endmodule
 
-
-
-
-// // reg [31:0] instruction;
-
-// // parameter ADD =5'b00000,SUB=5'b00001,MUL = 5'b00010, DIV=5'b00011,
-// // MOD=5'b00100,CMP=5'b00101,AND=5'b00110,OR=5'b00111,NOT=5'b01000,MOV=5'b01001,LSL=5'b01010,LSR=5'b01011,
-// // ASR=5'b01100,NOP=5'b01101,LD=5'b01110,ST=5'b01111,BEQ=5'b10000,BGT=5'b10001,B=5'b10010,CALL=5'b10011, RET=5'b10100;
-// reg HALTED;
-
-
-
-        // .isSt(isSt),
-        // .isLd(isLd),
-        // .isBeq(isBeq),
-        // .isBgt(isBgt),
-        // .isRet(isRet),
-        // .isImmediate(isImmediate),
-        // .isWb(isWb),
-        // .isUbranch(isUbranch),
-        // .isCall(isCall),
-        // .isAdd(isAdd),
-        // .isSub(isSub),
-        // .isCmp(isCmp),
-        // .isMul(isMul),
-        // .isDiv(isDiv),
-        // .isMod(isMod),
-        // .isLsl(isLsl),
-        // .isLsr(isLsr),
-        // .isAsr(isAsr),
-        // .isOr(isOr),
-        // .isAnd(isAnd),
-        // .isNot(isNot),
-        // .isMov(isMov)
-
-
-
-// reg [31:0] op1;
-// reg [31:0] op2;
-// wire isBeq;
-// wire isBgt;
-// wire isWb;    
-// wire isUbranch;
-// wire isCall;
-// wire isAdd;
-// wire isSub;
-// wire isCmp;
-// wire isMul;
-// wire isDiv;
-// wire isMod;
-// wire isLsl;
-// wire isLsr;
-// wire isAsr;
-// wire isOr;
-// wire isAnd;
-// wire isNot;

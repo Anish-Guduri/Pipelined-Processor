@@ -33,7 +33,7 @@ module MA_stage(
        output_MA_IR <= input_MA_IR;
        output_MA_controlBus <= input_MA_controlBus;
        MA_Ld_Result <= readData;
-        $display("Read Data %d  |  MA LD_result %d | MAR %d", readData, MA_Ld_Result, MAR);
+        // $display("Read Data %d  |  MA LD_result %d | MAR %d", readData, MA_Ld_Result, MAR);
     end
     // initial begin
     //     MA_writeEnable <=1'b0;

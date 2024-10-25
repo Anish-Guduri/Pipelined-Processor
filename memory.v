@@ -16,7 +16,7 @@ module memory(
                          memory[address + 2], 
                          memory[address + 1], 
                          memory[address] };      // LSB
-         $display("address %d : ReadData:%d", address, readData ); 
+        //  $display("address %d : ReadData:%d", address, readData ); 
     end
 
     // Perform write operation whenever writeEnable is high

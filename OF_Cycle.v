@@ -28,10 +28,10 @@ module OF_stage(
    
     
     mux_2x1 #(.regSize(4)) isStore_mux (
-        .output_y(isStore_result),          // MUX output: the next value of the PC
-        .input0(rs2),            // Normal PC increment
-        .input1(rd),              // Branch target address
-        .selectLine(isStore)    // Selection signal: branch taken or not
+        .output_y(isStore_result),          
+        .input0(rs2),            
+        .input1(rd),             
+        .selectLine(isStore)
     );
 
     mux_2x1 #(.regSize(4)) isRet_Mux (

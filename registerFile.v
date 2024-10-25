@@ -1,6 +1,6 @@
 // 32 x 32 Register File
 
-module registerFile(rdData1,rdData2,wrData,op1,op2,dReg, writeEnable,reset,clk);
+module registerFile(rdData1,rdData2,wrData,op1,op2,dReg, writeEnable,reset,clk,output_register_file);
 input clk, writeEnable, reset;
 input [3:0] op1;
 input [3:0] op2; 
@@ -8,6 +8,7 @@ input [3:0] dReg;
 input[31:0] wrData;
 output reg[31:0] rdData1;
 output reg[31:0] rdData2;
+output reg [31:0] output_register_file;
 
 integer k;
 reg[31:0] registerfile[0:15];
@@ -22,21 +23,27 @@ end
 
 // assign rdData1 =registerfile[op1];
 // assign rdData2 =registerfile[op2];
-always @(negedge clk or posedge reset) begin
+always @(*) begin
     // 
  if(reset) begin
     // $display("Hello World reset value: %d",reset);
     for(k=0;k<16;k=k+1) begin
-        //  #1
-         registerfile[k]<=k;
-        // temp= temp+32'b1;
-        // #2
-        // $display(" K: %d register value is:%b",k,registerfile[k]);
+
+         registerfile[k]<=32'b0;
+
     end
  end
  else begin
-    if(writeEnable && (!4'b1110) && (!4'b1111))
+    // $display("Registerfile WriteEnable %b  | r14 %b  | r15 %b", writeEnable ,registerfile[14],registerfile[15] );
+    if(writeEnable && (dReg != 4'b1110) && (dReg != 4'b1111)) begin
         registerfile[dReg]<=wrData;
- end   
+        // $display("Hello WOrld Registerfile");
+    end
+    output_register_file <= registerfile[dReg];
+    // $display("Hello WOrld Registerfile  %d   %d" , registerfile[dReg],output_register_file);
+
+    
+ end
+
 end
 endmodule

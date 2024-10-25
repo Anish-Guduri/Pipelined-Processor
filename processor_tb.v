@@ -58,6 +58,10 @@ wire [31:0] input_RW_Ld_Result;
 wire [31:0] input_RW_ALU_Result;
 wire [31:0] input_RW_IR;
 wire [21:0] input_RW_controlBus;
+wire [31:0] RW_Data_value;
+wire [3:0] RW_rd;
+wire RW_isWb;
+wire[31:0] output_register_file;
 
     pipeline_top_module processor(
     .clk(clk),
@@ -107,7 +111,11 @@ wire [21:0] input_RW_controlBus;
     .input_RW_Ld_Result(input_RW_Ld_Result),
     .input_RW_ALU_Result(input_RW_ALU_Result),
     .input_RW_IR(input_RW_IR),
-    .input_RW_controlBus(input_RW_controlBus)
+    .input_RW_controlBus(input_RW_controlBus),
+    .RW_Data_value(RW_Data_value),
+    .RW_isWb(RW_isWb),
+    .RW_rd(RW_rd),
+    .output_register_file(output_register_file)
     
    );
 
