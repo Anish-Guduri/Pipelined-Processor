@@ -27,7 +27,7 @@ always @(*) begin
 
     // Initialize outputs to default
     EX_ALU_Result = 32'b0; 
-    flags = 2'b00; // Clear flags at the start of the operation
+    // flags; // Clear flags at the start of the operation
 
     // ALU operations based on control signals
     if (isAdd) begin
@@ -38,8 +38,8 @@ always @(*) begin
     end
     else if (isCmp) begin
         EX_ALU_Result = Operand_EX_A - Operand_EX_B; // Comparison
-        flags[0] = (EX_ALU_Result == 0) ? 1'b1 : 1'b0; // Zero flag
-        flags[1] = (EX_ALU_Result > 0) ? 1'b1 : 1'b0;  // Positive flag
+        flags[0] = (EX_ALU_Result == 0) ? 1'b1 :flags[0] ; // Zero flag
+        flags[1] = (EX_ALU_Result > 0) ? 1'b1 :flags[1];  // Positive flag
     end
     else if (isMul) begin
         EX_ALU_Result = Operand_EX_A * Operand_EX_B; // Multiply

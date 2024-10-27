@@ -4,6 +4,7 @@ module IF_cycle(
     input [31:0] inputPC,                  // Program Counter (changed to input)
     input is_Branch_Taken,           // Branch taken signal
     input [31:0] branchPC,            // Branch target address
+    input isDataInterLock,
     output [31:0] IR,             // Instruction Register
     output reg [31:0] outputPC          // Next Program Counter
 );
@@ -35,14 +36,18 @@ module IF_cycle(
             // address <= 10'b0;            // Reset memory address
             PC <= 32'b0;
             // #2
-            $display("Resetting everything");
+            // $display("Resetting everything");
         end 
         else begin
             // #4
-            address <= PC;        // Set address based on mux output;
-            outputPC<=PC;
-            PC <=  mux_nextPC;     // Increment PC
-            // $display("PC: %d  BranchPC: %h , isBranchTaken: %d",outputPC,branchPC, is_Branch_Taken);
+            $display("PC: %d  %h",PC, IR);
+            if(isDataInterLock  == 1'b0) begin
+                // $display("PC: %d  %h",PC, IR);
+                address <= PC;        // Set address based on mux output;
+                outputPC<=PC;
+                PC <=  mux_nextPC;  // Increment PC
+            end
+            
      
         end
     end

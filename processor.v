@@ -142,6 +142,7 @@ reg [31:0] OF_IR;
         .reset(reset),
         .inputPC(PC),
         .IR(IR),
+        .isDataInterLock(isDataInterLock),
         .is_Branch_Taken(is_Branch_Taken),
         .branchPC(branchPC),
         .outputPC(output_IF_PC)
@@ -151,6 +152,8 @@ reg [31:0] OF_IR;
         .clk(clk),
         .output_IF_PC(output_IF_PC),
         .IF_instruction(IR),
+        .isDataInterLock(isDataInterLock),
+        .isBranchInterLock(is_Branch_Taken),
         .Input_OF_PC(input_OF_PC),
         .OF_instruction(Input_OF_IR)
     );
@@ -188,6 +191,8 @@ OF_EX_Latch of_ex_latch(
     .Operand_OF_2(Operand_2),
     .output_OF_IR(output_OF_IR),
     .Output_OF_controlBus(Output_OF_controlBus),
+    .isDataInterLock(isDataInterLock),
+    .isBranchInterLock(is_Branch_Taken),
     .input_EX_PC(input_EX_PC),
     .EX_branchTarget(EX_branchTarget),
     .Operand_EX_A(Operand_EX_A),
