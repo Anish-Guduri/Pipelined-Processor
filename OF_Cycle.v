@@ -1,5 +1,4 @@
 module OF_stage(
-    input clk,
     input [31:0] Input_OF_PC,
     input [31:0] Input_OF_IR,
     input [21:0] Input_OF_controlBus,
@@ -21,7 +20,7 @@ module OF_stage(
     reg[3:0] rs2;
     reg[3:0] ra = 4'b1111;
     wire [31:0] immediateVlaue;
-    reg reset;
+    // reg reset;
     reg isStore;
     reg isReturn;
     reg isImmediate;

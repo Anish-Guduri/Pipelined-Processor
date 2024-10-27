@@ -62,6 +62,9 @@ wire [31:0] RW_Data_value;
 wire [3:0] RW_rd;
 wire RW_isWb;
 wire[31:0] output_register_file;
+wire [31:0] op1;
+wire [31:0] op2;
+wire isDataInterLock;
 
     pipeline_top_module processor(
     .clk(clk),
@@ -74,8 +77,8 @@ wire[31:0] output_register_file;
     .input_OF_PC(input_OF_PC),
     .output_OF_PC(output_OF_PC),
     .branchTarget(branchTarget),
-    .Operand_A(Operand_A),
-    .Operand_B(Operand_B),
+    .Operand_OF_A(Operand_A),
+    .Operand_OF_B(Operand_B),
     .Operand_2(Operand_2),
     .Input_OF_IR(Input_OF_IR),
     .output_OF_IR (output_OF_IR),
@@ -115,7 +118,10 @@ wire[31:0] output_register_file;
     .RW_Data_value(RW_Data_value),
     .RW_isWb(RW_isWb),
     .RW_rd(RW_rd),
-    .output_register_file(output_register_file)
+    .output_register_file(output_register_file),
+    .op1(op1),
+    .op2(op2),
+    .isDataInterLock(isDataInterLock)
     
    );
 
@@ -133,7 +139,7 @@ wire[31:0] output_register_file;
 
     // Simulate for a specific duration and then finish
     initial begin
-        #250;            
+        #1000;            
         $finish; 
 
     end                       

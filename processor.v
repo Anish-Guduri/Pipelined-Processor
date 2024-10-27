@@ -33,6 +33,7 @@ no-bonus version.
 `include "MA_Cycle.v"
 `include "MA_RW_latch.v"
 `include "RW_Cycle.v"
+`include "data_interlock.v"
 
 
 
@@ -50,8 +51,8 @@ output wire [31:0] output_OF_PC,
 output wire [31:0] branchTarget,
 output wire [31:0] op1,
 output wire [31:0] op2,
-output wire [31:0] Operand_A,
-output wire [31:0] Operand_B,
+output wire [31:0] Operand_OF_A,
+output wire [31:0] Operand_OF_B,
 output wire [31:0] Operand_2,
 output wire [31:0] output_OF_IR,
 output wire [3:0] isStore_result,
@@ -96,7 +97,10 @@ output wire [21:0] input_RW_controlBus,
 output wire [31:0] RW_Data_value,
 output wire [3:0] RW_rd,
 output wire RW_isWb,
-output wire[31:0] output_register_file
+output wire[31:0] output_register_file,
+output wire [31:0] rdData1,
+output wire [31:0] rdData2,
+output wire isDataInterLock
 
 );
 
@@ -113,8 +117,8 @@ reg [31:0] OF_IR;
     .reset(reset),
     .rdData1(op1),
     .rdData2(op2),
-    .op1(isReturn_result),
-    .op2(isStore_result),
+    .operand1(isReturn_result),
+    .operand2(isStore_result),
     .writeEnable(RW_isWb),
     .wrData(RW_Data_value),
     .dReg(RW_rd),
@@ -158,7 +162,6 @@ Control_Unit controlUnit(
     );
 
 OF_stage OperandFetch(
-    .clk(clk),
     .Input_OF_PC(input_OF_PC),
     .Input_OF_IR(Input_OF_IR),
     .Input_OF_controlBus(Input_OF_controlBus),
@@ -166,8 +169,8 @@ OF_stage OperandFetch(
     .op2(op2),
     .output_OF_PC(output_OF_PC),
     .branchTarget(branchTarget),
-    .Operand_A(Operand_A),
-    .Operand_B(Operand_B),
+    .Operand_A(Operand_OF_A),
+    .Operand_B(Operand_OF_B),
     .Operand_2(Operand_2),
     .output_OF_IR(output_OF_IR),
     .isStore_result(isStore_result),
@@ -180,8 +183,8 @@ OF_EX_Latch of_ex_latch(
     .clk(clk),
     .output_OF_PC(output_OF_PC),
     .OF_branchTarget(branchTarget),
-    .Operand_OF_A(Operand_A),
-    .Operand_OF_B(Operand_B),
+    .Operand_OF_A(Operand_OF_A),
+    .Operand_OF_B(Operand_OF_B),
     .Operand_OF_2(Operand_2),
     .output_OF_IR(output_OF_IR),
     .Output_OF_controlBus(Output_OF_controlBus),
@@ -269,7 +272,13 @@ RW_stage rw_stage(
     .RW_rd(RW_rd)
 );
 
-
+data_interlock is_data_interlock(
+ .OF_instruction(Input_OF_IR),
+ .input_EX_IR(input_EX_IR),
+ .input_MA_IR(input_MA_IR),
+ .input_RW_IR(input_RW_IR),
+ .isDataInterLock(isDataInterLock)
+);
 
 
         // Initialize signals in an always block

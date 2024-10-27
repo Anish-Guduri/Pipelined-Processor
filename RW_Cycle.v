@@ -32,7 +32,6 @@ module RW_stage(
         .selectLine(isCall)    
     );
 
-
     always @(*) begin 
         isLd <= input_RW_controlBus[1];
         isCall <= input_RW_controlBus[8];
@@ -41,5 +40,6 @@ module RW_stage(
         mux_selectLines <= { isCall, isLd };
 
     end
+   
 
 endmodule
