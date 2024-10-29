@@ -2,14 +2,15 @@ module ALU_Module(
     input [31:0] Operand_EX_A,
     input [31:0] Operand_EX_B,
     input [21:9] ALU_Signals,
+    // input isCmp,
     output reg [1:0] flags,         // Adjusted to reg
     output reg signed [31:0] EX_ALU_Result  // Changed to reg for output
 );
 
 // Internal signal declarations
-reg isAdd, isSub, isCmp, isMul, isDiv, isMod, isLsl, isLsr, isAsr, isOr, isAnd, isNot, isMov;
+reg isAdd, isCmp, isSub, isMul, isDiv, isMod, isLsl, isLsr, isAsr, isOr, isAnd, isNot, isMov;
 
-always @(*) begin
+always @(Operand_EX_A or  Operand_EX_B or ALU_Signals) begin
     // Assigning control signals
     isAdd  = ALU_Signals[9];   
     isSub  = ALU_Signals[10];  
@@ -26,7 +27,7 @@ always @(*) begin
     isMov  = ALU_Signals[21];  
 
     // Initialize outputs to default
-    EX_ALU_Result = 32'b0; 
+    // EX_ALU_Result = 32'b0; 
     // flags; // Clear flags at the start of the operation
 
     // ALU operations based on control signals
@@ -39,8 +40,10 @@ always @(*) begin
     else if (isCmp) begin
         
         EX_ALU_Result = Operand_EX_A - Operand_EX_B; // Comparison
-        flags[0] <= (EX_ALU_Result == 0) ? 1'b1 :1'b0; // Zero flag
-        flags[1] <= (EX_ALU_Result > 0) ? 1'b1 :1'b0;  // Positive flag
+        flags[0] = (EX_ALU_Result == 0);
+        // flags[0] = (EX_ALU_Result == 0) ? 1'b1 :1'b0; // Zero flag
+        flags[1] = (EX_ALU_Result > 0);
+        // flags[1] = (EX_ALU_Result > 0) ? 1'b1 :1'b0;  // Positive flag
         $display("flag 1:  %b | flag 0:  %b  ALU result %d ",flags[1],flags[0] , EX_ALU_Result);
     end
     else if (isMul) begin
@@ -86,8 +89,8 @@ endmodule
 //     input [31:0] Operand_EX_A,
 //     input [31:0] Operand_EX_B,
 //     input [21:9] ALU_Signals,
-//     output [1:0] flags,
-//     output [31:0] EX_ALU_Result
+//     output reg [1:0] flags,
+//     output reg [31:0] EX_ALU_Result
 // );
 // reg isAdd, isSub, isCmp,isMul, isDiv, isMod, isLsl, isLsr, isAsr, isOr, isAnd, isNot, isMov;
 
@@ -166,4 +169,91 @@ endmodule
 //         end
 
 //     endcase
+// endmodule
+
+
+// module ALU_Module(
+//     input [31:0] Operand_EX_A,
+//     input [31:0] Operand_EX_B,
+//     input [21:9] ALU_Signals,
+//     output reg [1:0] flags,           // Changed to reg for output
+//     output reg signed [31:0] EX_ALU_Result    // Changed to reg for output
+// );
+
+//     // Internal signal declarations
+//     reg isAdd, isSub, isCmp, isMul, isDiv, isMod, isLsl, isLsr, isAsr, isOr, isAnd, isNot, isMov;
+
+//     always @(Operand_EX_A or  Operand_EX_B or (ALU_Signals)) begin
+//         // Assigning control signals
+//         isAdd  = ALU_Signals[9];
+//         isSub  = ALU_Signals[10];
+//         isCmp  = ALU_Signals[11];
+//         isMul  = ALU_Signals[12];
+//         isDiv  = ALU_Signals[13];
+//         isMod  = ALU_Signals[14];
+//         isLsl  = ALU_Signals[15];
+//         isLsr  = ALU_Signals[16];
+//         isAsr  = ALU_Signals[17];
+//         isOr   = ALU_Signals[18];
+//         isAnd  = ALU_Signals[19];
+//         isNot  = ALU_Signals[20];
+//         isMov  = ALU_Signals[21];
+
+//         // Initialize outputs to default
+//         EX_ALU_Result = 32'b0;
+//         // flags = 2'b0;
+
+//         // ALU operations based on control signals
+//         if(ALU_Signals >0)  begin
+//         case (1'b1) // Match on which control signal is active
+//             isAdd: begin
+//                 EX_ALU_Result = Operand_EX_A + Operand_EX_B;
+//             end
+//             isSub: begin
+//                 EX_ALU_Result = Operand_EX_A - Operand_EX_B;
+//             end
+//             isCmp: begin
+//                 EX_ALU_Result = Operand_EX_A - Operand_EX_B;
+//                 flags[0] = (EX_ALU_Result == 0)? 1'b1 :1'b0;; // Zero flag
+//                 flags[1] = (EX_ALU_Result > 0) ? 1'b1 :1'b0;  // Positive flag
+//                 $display("flag 1:  %b | flag 0:  %b  ALU result %d ",flags[1],flags[0] , EX_ALU_Result);
+// //     end
+//             end
+//             isMul: begin
+//                 EX_ALU_Result = Operand_EX_A * Operand_EX_B;
+//             end
+//             isDiv: begin
+//                 EX_ALU_Result = Operand_EX_A / Operand_EX_B;
+//             end
+//             isMod: begin
+//                 EX_ALU_Result = Operand_EX_A % Operand_EX_B;
+//             end
+//             isLsl: begin
+//                 EX_ALU_Result = Operand_EX_A << Operand_EX_B;
+//             end
+//             isLsr: begin
+//                 EX_ALU_Result = Operand_EX_A >> Operand_EX_B;
+//             end
+//             isAsr: begin
+//                 EX_ALU_Result = Operand_EX_A >>> Operand_EX_B;
+//             end
+//             isOr: begin
+//                 EX_ALU_Result = Operand_EX_A | Operand_EX_B;
+//             end
+//             isAnd: begin
+//                 EX_ALU_Result = Operand_EX_A & Operand_EX_B;
+//             end
+//             isNot: begin
+//                 EX_ALU_Result = ~Operand_EX_A;
+//             end
+//             isMov: begin
+//                 EX_ALU_Result = Operand_EX_B;
+//             end
+//             default: begin
+//                 EX_ALU_Result = 32'b0; // Default case
+//                 flags = 2'b0;
+//             end
+//         endcase
+//         end
+//     end
 // endmodule

@@ -32,6 +32,7 @@ ALU_Module ALU_module(
     .Operand_EX_A(Operand_EX_A),
     .Operand_EX_B(Operand_EX_B),
     .ALU_Signals(Input_EX_controlBus[21:9]),
+    // .isCmp(Input_EX_controlBus[11]),
     .flags(flags),
     .EX_ALU_Result(ALU_Result)
 );
