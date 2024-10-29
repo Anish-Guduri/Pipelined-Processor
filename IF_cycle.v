@@ -40,7 +40,7 @@ module IF_cycle(
         end 
         else begin
             // #4
-            $display("PC: %d  %h",PC, IR);
+            // $display("PC: %d  %h",PC, IR);
             if(isDataInterLock  == 1'b0) begin
                 // $display("PC: %d  %h",PC, IR);
                 address <= PC;        // Set address based on mux output;

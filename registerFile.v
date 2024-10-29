@@ -33,7 +33,7 @@ module registerFile(
     always @(negedge clk) begin
         if (reset) begin
             for (k = 0; k < 16; k = k + 1) begin
-                registerfile[k] <= k;
+                registerfile[k] <= 32'b0;
             end
         end
         else if (writeEnable && (dReg != 4'b1110) && (dReg != 4'b1111)) begin

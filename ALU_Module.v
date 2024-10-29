@@ -3,7 +3,7 @@ module ALU_Module(
     input [31:0] Operand_EX_B,
     input [21:9] ALU_Signals,
     output reg [1:0] flags,         // Adjusted to reg
-    output reg [31:0] EX_ALU_Result  // Changed to reg for output
+    output reg signed [31:0] EX_ALU_Result  // Changed to reg for output
 );
 
 // Internal signal declarations
@@ -37,9 +37,11 @@ always @(*) begin
         EX_ALU_Result = Operand_EX_A - Operand_EX_B; // Subtract
     end
     else if (isCmp) begin
+        
         EX_ALU_Result = Operand_EX_A - Operand_EX_B; // Comparison
-        flags[0] = (EX_ALU_Result == 0) ? 1'b1 :flags[0] ; // Zero flag
-        flags[1] = (EX_ALU_Result > 0) ? 1'b1 :flags[1];  // Positive flag
+        flags[0] <= (EX_ALU_Result == 0) ? 1'b1 :1'b0; // Zero flag
+        flags[1] <= (EX_ALU_Result > 0) ? 1'b1 :1'b0;  // Positive flag
+        $display("flag 1:  %b | flag 0:  %b  ALU result %d ",flags[1],flags[0] , EX_ALU_Result);
     end
     else if (isMul) begin
         EX_ALU_Result = Operand_EX_A * Operand_EX_B; // Multiply
