@@ -82,7 +82,7 @@ b .loop  : 0x97fffffc
 
 
 
-
+// Load store
 4c0004d2
 4c400000
 7c0404d4
@@ -101,3 +101,4 @@ b .loop  : 0x97fffffc
 0x10448000
 0x04880001
 0x97fffffc
+

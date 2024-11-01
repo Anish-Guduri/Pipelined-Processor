@@ -41,10 +41,7 @@ module forwarding_unit_src1(
         is_MA_EX_conflict_src1 = 0;
 
         // Check for B conflicts
-        if(((RW_opcode == 5'b01101) || (RW_opcode == 5'b00101) ||
-            (RW_opcode == 5'b01111) || (RW_opcode == 5'b10010) ||
-            (RW_opcode == 5'b10000) || (RW_opcode == 5'b10001) ||
-            (RW_opcode == 5'b10100)) == 0) begin
+        if(((RW_opcode == 5'b01101) || (RW_opcode == 5'b00101) || (RW_opcode == 5'b01111) || (RW_opcode == 5'b10010) || (RW_opcode == 5'b10000) || (RW_opcode == 5'b10001) || (RW_opcode == 5'b10100)) == 0) begin
 
                 if(((OF_opcode == 5'b01101) || (OF_opcode == 5'b10010) || 
                     (OF_opcode == 5'b10000) || (OF_opcode == 5'b10001) || 
@@ -56,7 +53,8 @@ module forwarding_unit_src1(
                         if (RW_opcode == 5'b10011) RW_dest = ra;
 
                         if(OF_src1 == RW_dest) begin
-                            is_RW_OF_conflict_src1 =1;
+                            // $display("  %h | %h |  %b | %b | %b | %b", input_RW_IR, input_OF_IR ,RW_dest,OF_src1, RW_opcode , OF_opcode);
+                            is_RW_OF_conflict_src1 = 1;
                         end else begin
                             is_RW_OF_conflict_src1 = 0;
                         end
@@ -75,6 +73,7 @@ module forwarding_unit_src1(
                         if (RW_opcode == 5'b10011) RW_dest = ra;
 
                         if(EX_src1 == RW_dest) begin
+                            $display("  %h | %h |  %b | %b |", input_RW_IR, input_EX_IR ,RW_dest,EX_src1);
                             is_RW_EX_conflict_src1 = 1;
                         end else begin
                             is_RW_EX_conflict_src1 = 0;
@@ -136,6 +135,12 @@ module forwarding_unit_src1(
             end
 
 
+    end
+    initial begin
+                is_RW_OF_conflict_src1 = 0;
+                is_RW_EX_conflict_src1 = 0;
+                is_RW_MA_conflict_src1 = 0; 
+                is_MA_EX_conflict_src1 = 0;
     end
 
 endmodule

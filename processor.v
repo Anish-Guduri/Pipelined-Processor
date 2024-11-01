@@ -102,7 +102,15 @@ output wire RW_isWb,
 output wire[31:0] output_register_file,
 output wire [31:0] rdData1,
 output wire [31:0] rdData2,
-output wire isDataInterLock
+output wire isDataInterLock,
+output wire is_RW_OF_conflict_src1,
+output wire is_RW_EX_conflict_src1,
+output wire is_RW_MA_conflict_src1,
+output wire is_MA_EX_conflict_src1,
+output wire is_RW_OF_conflict_src2,
+output wire is_RW_EX_conflict_src2,
+output wire is_RW_MA_conflict_src2,
+output wire is_MA_EX_conflict_src2
 
 );
 
@@ -145,6 +153,7 @@ reg [31:0] OF_IR;
         .inputPC(PC),
         .IR(IR),
         .isDataInterLock(isDataInterLock),
+        // .isDataInterLock(1'b0),
         .is_Branch_Taken(is_Branch_Taken),
         .branchPC(branchPC),
         .outputPC(output_IF_PC)
@@ -155,6 +164,7 @@ reg [31:0] OF_IR;
         .output_IF_PC(output_IF_PC),
         .IF_instruction(IR),
         .isDataInterLock(isDataInterLock),
+        // .isDataInterLock(1'b0),
         .isBranchInterLock(is_Branch_Taken),
         .Input_OF_PC(input_OF_PC),
         .OF_instruction(Input_OF_IR)
@@ -180,7 +190,11 @@ OF_stage OperandFetch(
     .output_OF_IR(output_OF_IR),
     .isStore_result(isStore_result),
     .isReturn_result(isReturn_result),
-    .Output_OF_controlBus(Output_OF_controlBus)
+    .Output_OF_controlBus(Output_OF_controlBus),
+    .RW_Data_value(RW_Data_value),
+    .RW_rd(RW_rd),
+    .is_RW_OF_conflict_src1(is_RW_OF_conflict_src1),
+    .is_RW_OF_conflict_src2(is_RW_OF_conflict_src2)
     );
 
 
@@ -194,6 +208,7 @@ OF_EX_Latch of_ex_latch(
     .output_OF_IR(output_OF_IR),
     .Output_OF_controlBus(Output_OF_controlBus),
     .isDataInterLock(isDataInterLock),
+    // .isDataInterLock(1'b0),
     .isBranchInterLock(is_Branch_Taken),
     .input_EX_PC(input_EX_PC),
     .EX_branchTarget(EX_branchTarget),
@@ -219,7 +234,14 @@ ALU_Stage ALU_cycle(
     .output_EX_IR(output_EX_IR),
     .output_EX_controlBus(output_EX_controlBus),
     .EX_branchPC(branchPC),
-    .EX_is_Branch_Taken(is_Branch_Taken)
+    .EX_is_Branch_Taken(is_Branch_Taken),
+    .RW_Data_value(RW_Data_value),
+    .RW_rd(RW_rd),
+    .input_MA_ALU_Result(input_MA_ALU_Result),
+    .is_RW_EX_conflict_src1(is_RW_EX_conflict_src1),
+    .is_RW_EX_conflict_src2(is_RW_EX_conflict_src2),
+    .is_MA_EX_conflict_src1(is_MA_EX_conflict_src1),
+    .is_MA_EX_conflict_src2(is_MA_EX_conflict_src2)
 );
 
 
@@ -250,7 +272,10 @@ MA_stage MA_cycle(
 .output_MA_controlBus(output_MA_controlBus),
 .MA_Ld_Result(MA_Ld_Result),
 .MDR(MDR),
-.MA_writeEnable(MA_writeEnable)
+.MA_writeEnable(MA_writeEnable),
+.RW_Data_value(RW_Data_value),
+.RW_rd(RW_rd),
+.is_RW_MA_conflict_src2(is_RW_MA_conflict_src2)
 
 );
 
@@ -280,7 +305,7 @@ RW_stage rw_stage(
 );
 
 data_interlock is_data_interlock(
- .OF_instruction(Input_OF_IR),
+ .input_OF_IR(Input_OF_IR),
  .input_EX_IR(input_EX_IR),
  .input_MA_IR(input_MA_IR),
  .input_RW_IR(input_RW_IR),
@@ -292,7 +317,11 @@ forwarding_unit_src1 forwarding_src1(
     .input_OF_IR(Input_OF_IR),
     .input_EX_IR(input_EX_IR),
     .input_MA_IR(input_MA_IR),
-    .input_RW_IR(input_RW_IR)
+    .input_RW_IR(input_RW_IR),
+    .is_RW_OF_conflict_src1(is_RW_OF_conflict_src1),
+    .is_RW_EX_conflict_src1(is_RW_EX_conflict_src1),
+    .is_RW_MA_conflict_src1(is_RW_MA_conflict_src1),
+    .is_MA_EX_conflict_src1(is_MA_EX_conflict_src1)
 
 );
 
@@ -300,7 +329,11 @@ forwarding_unit_src2 forwarding_src2(
     .input_OF_IR(Input_OF_IR),
     .input_EX_IR(input_EX_IR),
     .input_MA_IR(input_MA_IR),
-    .input_RW_IR(input_RW_IR)
+    .input_RW_IR(input_RW_IR),
+    .is_RW_OF_conflict_src2(is_RW_OF_conflict_src2),
+    .is_RW_EX_conflict_src2(is_RW_EX_conflict_src2),
+    .is_RW_MA_conflict_src2(is_RW_MA_conflict_src2),
+    .is_MA_EX_conflict_src2(is_MA_EX_conflict_src2)
 
 );
         // Initialize signals in an always block

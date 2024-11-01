@@ -10,6 +10,7 @@ module mux_3x1 #(parameter regSize = 32) (
             2'b00: output_y = input0;   // Select input0
             2'b01: output_y = input1;   // Select input1
             2'b10: output_y = input2;   // Select input2
+            2'b11: output_y = input2;
         endcase
         // $display("Selected input: %d, Output: %d", selectLine, output_y);
     end

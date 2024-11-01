@@ -4,15 +4,20 @@ module OF_stage(
     input [21:0] Input_OF_controlBus,
     input [31:0] op1,
     input [31:0] op2,
+    input [31:0] RW_Data_value,
+    input [3:0] RW_rd,
+    input is_RW_OF_conflict_src1,
+    input is_RW_OF_conflict_src2,
     output reg [31:0] output_OF_PC,
     output [31:0] branchTarget,
-    output reg [31:0] Operand_A,
+    output [31:0] Operand_A,
     output [31:0] Operand_B,
-    output reg [31:0] Operand_2,
+    output [31:0] Operand_2,
     output reg [31:0 ] output_OF_IR,
     output [3:0] isStore_result,
     output [3:0] isReturn_result,
     output reg [21:0] Output_OF_controlBus
+
 );
 
     reg[3:0] rd;
@@ -49,10 +54,23 @@ module OF_stage(
     );
 
     mux_2x1 #(.regSize(32)) isImmediate_mux (
-        .output_y(Operand_B),          // MUX output: the next value of the PC
-        .input0(op2),            // Normal PC increment
-        .input1(immediateVlaue),              // Branch target address
-        .selectLine(isImmediate)    // Selection signal: branch taken or not
+        .output_y(Operand_B),          
+        .input0(Operand_2),            
+        .input1(immediateVlaue),              
+        .selectLine(isImmediate)    
+    );
+
+    mux_2x1 #(.regSize(32)) is_RW_OF_forwarding_src1(
+        .output_y(Operand_A),          
+        .input0(op1),            
+        .input1(RW_Data_value),              
+        .selectLine(is_RW_OF_conflict_src1) 
+    );
+    mux_2x1 #(.regSize(32)) is_RW_OF_forwarding_src2(
+        .output_y(Operand_2),          
+        .input0(op2),            
+        .input1(RW_Data_value),              
+        .selectLine(is_RW_OF_conflict_src2) 
     );
 
 
@@ -69,8 +87,8 @@ module OF_stage(
             // immediateVlaue <=Input_OF_IR[17:0];
             output_OF_PC <= Input_OF_PC;
             output_OF_IR <= Input_OF_IR;
-            Operand_2 <= op2;
-            Operand_A <= op1;
+            // Operand_2 <= op2;
+            // Operand_A <= op1;
             Output_OF_controlBus <= Input_OF_controlBus;
 
 

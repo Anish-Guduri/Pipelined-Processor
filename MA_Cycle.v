@@ -5,6 +5,9 @@ module MA_stage(
     input [31:0] input_MA_IR,
     input [21:0] input_MA_controlBus,
     input [31:0] readData,
+    input [31:0] RW_Data_value,
+    input [3:0] RW_rd,
+    input is_RW_MA_conflict_src2,
     output reg [31:0] output_MA_PC,
     output reg [31:0] output_MA_ALU_Result,
     output reg [31:0] output_MA_IR,
@@ -17,6 +20,15 @@ module MA_stage(
     reg [31:0] MAR;
     reg isSt, isLd;
 
+    wire [31:0] MA_operand_2;
+    
+    mux_2x1 #(.regSize(32)) is_RW_EX_OP2_forwarding_src2(
+        .output_y(MA_operand_2),          
+        .input0(input_MA_op2),            
+        .input1(RW_Data_value),              
+        .selectLine(is_RW_MA_conflict_src2)
+    );
+
     always@(*) begin
     //    $display("Hello"); 
        MA_writeEnable <=1'b0;
@@ -27,13 +39,14 @@ module MA_stage(
        end
 
        MAR <= input_MA_ALU_Result;
-       MDR <= input_MA_op2;
+       MDR <= MA_operand_2;
        output_MA_PC <= input_MA_PC;
        output_MA_ALU_Result <=input_MA_ALU_Result;
        output_MA_IR <= input_MA_IR;
        output_MA_controlBus <= input_MA_controlBus;
        MA_Ld_Result <= readData;
-        // $display("Read Data %d  |  MA LD_result %d | MAR %d", readData, MA_Ld_Result, MAR);
+
+       // $display("Read Data %d  |  MA LD_result %d | MAR %d", readData, MA_Ld_Result, MAR);
     end
     // initial begin
     //     MA_writeEnable <=1'b0;
