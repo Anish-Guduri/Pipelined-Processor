@@ -29,18 +29,32 @@ module forwarding_unit_src2(
 
     reg [3:0] ra = 4'b1111;
 
-    always @(*) begin
+    reg first_Done = 0;
+
+    always @(input_OF_IR or input_EX_IR or input_MA_IR or input_RW_IR) begin
         OF_opcode = input_OF_IR[31:27];
         EX_opcode = input_EX_IR[31:27];
         MA_opcode = input_MA_IR[31:27];
         RW_opcode = input_RW_IR[31:27];
-
+        is_RW_B_conflict =0;
+        is_MA_B_conflict =0;
+        is_RW_OF_conflict_src2 = 0;
+        is_RW_EX_conflict_src2 = 0;
+        is_RW_MA_conflict_src2 = 0;
+        is_MA_EX_conflict_src2 = 0;
         // Check for B conflicts
-        is_RW_B_conflict = ~((RW_opcode == 5'b01101) || (RW_opcode == 5'b00101) ||
-                          (RW_opcode == 5'b01111) || (RW_opcode == 5'b10010) ||
-                          (RW_opcode == 5'b10000) || (RW_opcode == 5'b10001) ||
-                          (RW_opcode == 5'b10100));
+        // is_RW_B_conflict = ~((RW_opcode == 5'b01101) || (RW_opcode == 5'b00101) ||
+        //                   (RW_opcode == 5'b01111) || (RW_opcode == 5'b10010) ||
+        //                   (RW_opcode == 5'b10000) || (RW_opcode == 5'b10001) ||
+        //                   (RW_opcode == 5'b10100));
 
+     is_RW_B_conflict =((RW_opcode == 5'b01101) || (RW_opcode == 5'b00101) || 
+                        (RW_opcode == 5'b01111) || (RW_opcode == 5'b10010) || 
+                        (RW_opcode == 5'b10000) || (RW_opcode == 5'b10001) || 
+                        (RW_opcode == 5'b10100));
+            
+        //     disable conflict_block;
+        // end
         is_MA_B_conflict = ~((MA_opcode == 5'b01101) || (MA_opcode == 5'b00101) ||
                           (MA_opcode == 5'b01111) || (MA_opcode == 5'b10010) ||
                           (MA_opcode == 5'b10000) || (MA_opcode == 5'b10001) ||
@@ -61,14 +75,11 @@ module forwarding_unit_src2(
         is_MA_EX_conflict_src2 = ~((EX_opcode == 5'b01101) || (EX_opcode == 5'b10010) || 
                               (EX_opcode == 5'b10000) || (EX_opcode == 5'b10001) || 
                               (EX_opcode == 5'b10011));
-
-
-    end
-    always @(*) begin
-        // is_RW_OF_conflict_src1 = 0;
-        // is_RW_EX_conflict_src1 = 0;
-        // is_RW_MA_conflict_src1 = 0;
-        // is_MA_EX_conflict_src1 = 0;
+        first_Done =1;
+     end
+    always @(input_OF_IR or input_EX_IR or input_MA_IR or input_RW_IR) begin :conflict_block
+        if(first_Done) begin
+        
         if (OF_opcode != 5'B01111 && input_OF_IR[26] == 1'b1) begin
                RW_OF_hasSrc2 = 1'b0;
             end
@@ -78,7 +89,10 @@ module forwarding_unit_src2(
         if (MA_opcode != 5'B01111 && input_MA_IR[26] == 1'b1) begin
                RW_MA_hasSrc2 = 1'b0;
             end
-        if (is_RW_B_conflict) begin
+        if (is_RW_B_conflict == 1 ) begin
+
+         $display("Hello RW iR  %b | %B | %B | %B | %B" , is_RW_B_conflict, OF_opcode,EX_opcode,MA_opcode,RW_opcode);
+
             OF_src2 = input_OF_IR[17:14];
             EX_src2 = input_EX_IR[17:14];
             MA_src2 = input_MA_IR[17:14];
@@ -116,6 +130,7 @@ module forwarding_unit_src2(
 
 
         if( is_MA_B_conflict) begin
+            // $display("Hello RW iR  %b %H %H" , is_MA_B_conflict, input_EX_IR,input_MA_IR);
             EX_src2 = input_EX_IR[21:18];
             MA_dest = input_MA_IR[25:22];
 
@@ -132,6 +147,7 @@ module forwarding_unit_src2(
                 is_MA_EX_conflict_src2 = 0;
             end
 
+        end
         end
     end
 

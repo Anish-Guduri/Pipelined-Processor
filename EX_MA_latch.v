@@ -14,12 +14,13 @@ module EX_MA_Latch(
 );
 
     always @(negedge clk) begin
-        
+
+        input_MA_controlBus <= output_EX_controlBus;
+        input_MA_IR <= output_EX_IR;
         input_MA_PC <= output_EX_PC;
         input_MA_ALU_Result <= ALU_Result;
         input_MA_op2 <= EX_op2;
-        input_MA_IR <= output_EX_IR;
-        input_MA_controlBus <= output_EX_controlBus;
+
 
     end
 

@@ -33,12 +33,13 @@ always @(negedge clk) begin
     else begin
         // #1
         Input_EX_controlBus <= Output_OF_controlBus;
+        input_EX_IR <= output_OF_IR;
         input_EX_PC <= output_OF_PC;
         EX_branchTarget <= OF_branchTarget;
         Operand_EX_A <= Operand_OF_A;
         Operand_EX_B <= Operand_OF_B;
         Operand_EX_2 <= Operand_OF_2;
-        input_EX_IR <= output_OF_IR;
+        
         
         
     end

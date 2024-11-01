@@ -44,7 +44,7 @@ always @(Operand_EX_A or  Operand_EX_B or ALU_Signals) begin
         // flags[0] = (EX_ALU_Result == 0) ? 1'b1 :1'b0; // Zero flag
         flags[1] = (EX_ALU_Result > 0);
         // flags[1] = (EX_ALU_Result > 0) ? 1'b1 :1'b0;  // Positive flag
-        $display("flag 1:  %b | flag 0:  %b  ALU result %d ",flags[1],flags[0] , EX_ALU_Result);
+        // $display("flag 1:  %b | flag 0:  %b  ALU result %d ",flags[1],flags[0] , EX_ALU_Result);
     end
     else if (isMul) begin
         EX_ALU_Result = Operand_EX_A * Operand_EX_B; // Multiply

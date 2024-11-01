@@ -14,8 +14,8 @@ module forwarding_unit_src1(
     reg [4:0] MA_opcode;
     reg [4:0] RW_opcode;
 
-    reg is_RW_B_conflict;
-    reg is_MA_B_conflict;
+    // reg is_RW_B_conflict;
+    // reg is_MA_B_conflict;
     reg [3:0] RW_dest;
     reg [3:0] MA_dest;
     reg [3:0] OF_src1;
@@ -23,107 +23,119 @@ module forwarding_unit_src1(
     reg [3:0] EX_src1;
 
     reg [3:0] ra = 4'b1111;
+    // reg first_Done =0;
 
     // Determine opcode conflicts
     always @(*) begin
+        // first_Done =0;
         OF_opcode = input_OF_IR[31:27];
         EX_opcode = input_EX_IR[31:27];
         MA_opcode = input_MA_IR[31:27];
         RW_opcode = input_RW_IR[31:27];
+        // is_RW_B_conflict =0;
+        // is_MA_B_conflict = 0;
+
+        is_RW_OF_conflict_src1 = 0;
+        is_RW_EX_conflict_src1 = 0;
+        is_RW_MA_conflict_src1 = 0;
+        is_MA_EX_conflict_src1 = 0;
 
         // Check for B conflicts
-        is_RW_B_conflict = ~((RW_opcode == 5'b01101) || (RW_opcode == 5'b00101) ||
-                          (RW_opcode == 5'b01111) || (RW_opcode == 5'b10010) ||
-                          (RW_opcode == 5'b10000) || (RW_opcode == 5'b10001) ||
-                          (RW_opcode == 5'b10100));
+        if(((RW_opcode == 5'b01101) || (RW_opcode == 5'b00101) ||
+            (RW_opcode == 5'b01111) || (RW_opcode == 5'b10010) ||
+            (RW_opcode == 5'b10000) || (RW_opcode == 5'b10001) ||
+            (RW_opcode == 5'b10100)) == 0) begin
 
-        is_MA_B_conflict = ~((MA_opcode == 5'b01101) || (MA_opcode == 5'b00101) ||
-                          (MA_opcode == 5'b01111) || (MA_opcode == 5'b10010) ||
-                          (MA_opcode == 5'b10000) || (MA_opcode == 5'b10001) ||
-                          (MA_opcode == 5'b10100));
+                if(((OF_opcode == 5'b01101) || (OF_opcode == 5'b10010) || 
+                    (OF_opcode == 5'b10000) || (OF_opcode == 5'b10001) || 
+                    (OF_opcode == 5'b10011) || (OF_opcode == 5'b01000) || 
+                    (OF_opcode == 5'b01001)) == 0) begin
+                        RW_dest = input_RW_IR[25:22];
+                        OF_src1 = input_OF_IR[21:18];
+                        if (OF_opcode == 5'b10100) OF_src1 = ra;
+                        if (RW_opcode == 5'b10011) RW_dest = ra;
 
-        is_RW_OF_conflict_src1 = ~((OF_opcode == 5'b01101) || (OF_opcode == 5'b10010) || 
-                              (OF_opcode == 5'b10000) || (OF_opcode == 5'b10001) || 
-                              (OF_opcode == 5'b10011) || (OF_opcode == 5'b01000) || 
-                              (OF_opcode == 5'b01001));
+                        if(OF_src1 == RW_dest) begin
+                            is_RW_OF_conflict_src1 =1;
+                        end else begin
+                            is_RW_OF_conflict_src1 = 0;
+                        end
 
-        is_RW_EX_conflict_src1 = ~((EX_opcode == 5'b01101) || (EX_opcode == 5'b10010) || 
-                              (EX_opcode == 5'b10000) || (EX_opcode == 5'b10001) || 
-                              (EX_opcode == 5'b10011) || (EX_opcode == 5'b01000) || 
-                              (EX_opcode == 5'b01001));
+                    end else begin
+                        is_RW_OF_conflict_src1 = 0;
+                    end
 
-        is_RW_MA_conflict_src1 = ~((MA_opcode == 5'b01101) || (MA_opcode == 5'b10010) || 
-                              (MA_opcode == 5'b10000) || (MA_opcode == 5'b10001) || 
-                              (MA_opcode == 5'b10011) || (MA_opcode == 5'b01000) || 
-                              (MA_opcode == 5'b01001));
-        
-        is_MA_EX_conflict_src1 = ~((EX_opcode == 5'b01101) || (EX_opcode == 5'b10010) || 
-                              (EX_opcode == 5'b10000) || (EX_opcode == 5'b10001) || 
-                              (EX_opcode == 5'b10011) || (EX_opcode == 5'b01000) || 
-                              (EX_opcode == 5'b01001));
+                if(((EX_opcode == 5'b01101) || (EX_opcode == 5'b10010) || 
+                    (EX_opcode == 5'b10000) || (EX_opcode == 5'b10001) || 
+                    (EX_opcode == 5'b10011) || (EX_opcode == 5'b01000) || 
+                    (EX_opcode == 5'b01001))==0) begin
+                        RW_dest = input_RW_IR[25:22];
+                        EX_src1 = input_EX_IR[21:18];
+                        if (EX_opcode == 5'b10100) EX_src1 = ra;
+                        if (RW_opcode == 5'b10011) RW_dest = ra;
 
-    end
+                        if(EX_src1 == RW_dest) begin
+                            is_RW_EX_conflict_src1 = 1;
+                        end else begin
+                            is_RW_EX_conflict_src1 = 0;
+                        end
+                        
+                    end else begin
+                        is_RW_EX_conflict_src1 = 0;
+                    end
+                if(((MA_opcode == 5'b01101) || (MA_opcode == 5'b10010) || 
+                    (MA_opcode == 5'b10000) || (MA_opcode == 5'b10001) || 
+                    (MA_opcode == 5'b10011) || (MA_opcode == 5'b01000) || 
+                    (MA_opcode == 5'b01001)) == 0) begin
+                        RW_dest = input_RW_IR[25:22];
+                        MA_src1 = input_MA_IR[21:18];
+                        if (MA_opcode == 5'b10100) MA_src1 = ra;
+                        if (RW_opcode == 5'b10011) RW_dest = ra;
 
-    // Forwarding logic
-    always @(*) begin
-        // is_RW_OF_conflict_src1 = 0;
-        // is_RW_EX_conflict_src1 = 0;
-        // is_RW_MA_conflict_src1 = 0;
-        // is_MA_EX_conflict_src1 = 0;
+                        if(MA_src1 == RW_dest) begin
+                            is_RW_MA_conflict_src1 = 1;
+                        end else begin
+                            is_RW_MA_conflict_src1 = 0;
+                        end
+                    end  else begin
+                        is_RW_MA_conflict_src1 = 0;
+                    end 
 
-        if (is_RW_B_conflict) begin
-            OF_src1 = input_OF_IR[21:18];
-            EX_src1 = input_EX_IR[21:18];
-            MA_src1 = input_MA_IR[21:18];
-            RW_dest = input_RW_IR[25:22];
-
-            // Update based on special opcode cases
-            if (OF_opcode == 5'b10100) OF_src1 = ra;
-            if (EX_opcode == 5'b10100) EX_src1 = ra;
-            if (MA_opcode == 5'b10100) MA_src1 = ra;
-            if (RW_opcode == 5'b10011) RW_dest = ra;
-
-            // RW to OF forwarding
-            if (is_RW_OF_conflict_src1 && (OF_src1 == RW_dest)) begin
-                is_RW_OF_conflict_src1 = 1;
             end else begin
                 is_RW_OF_conflict_src1 = 0;
-            end
-
-            // RW to EX forwarding
-            if (is_RW_EX_conflict_src1 && (EX_src1 == RW_dest)) begin
-                is_RW_EX_conflict_src1 = 1;
-            end else begin
                 is_RW_EX_conflict_src1 = 0;
-            end
-
-            // RW to MA forwarding
-            if (is_RW_MA_conflict_src1 && (MA_src1 == RW_dest)) begin
-                is_RW_MA_conflict_src1 = 1;
-            end else begin
                 is_RW_MA_conflict_src1 = 0;
             end
-        end
 
-
-        if( is_MA_B_conflict) begin
-            EX_src1 = input_EX_IR[21:18];
-            MA_dest = input_MA_IR[25:22];
-
-            if (EX_opcode == 5'b10100) EX_src1 = ra;
-            if (MA_opcode == 5'b10011) MA_dest = ra;
-
-            
-            if (is_MA_EX_conflict_src1 && (EX_src1 == MA_dest)) begin
+        if(((MA_opcode == 5'b01101) || (MA_opcode == 5'b00101) ||
+            (MA_opcode == 5'b01111) || (MA_opcode == 5'b10010) ||
+            (MA_opcode == 5'b10000) || (MA_opcode == 5'b10001) ||
+            (MA_opcode == 5'b10100))==0) begin
                 
-                is_MA_EX_conflict_src1 = 1;
+                if(((EX_opcode == 5'b01101) || (EX_opcode == 5'b10010) || 
+                    (EX_opcode == 5'b10000) || (EX_opcode == 5'b10001) || 
+                    (EX_opcode == 5'b10011) || (EX_opcode == 5'b01000) || 
+                    (EX_opcode == 5'b01001))==0) begin
+                        MA_dest = input_MA_IR[25:22];
+                        EX_src1 = input_EX_IR[21:18];
+                        if (EX_opcode == 5'b10100) EX_src1 = ra;
+                        if (MA_opcode == 5'b10011) MA_dest = ra;
+                        if(EX_src1 == MA_dest) begin
+                            is_MA_EX_conflict_src1 = 1;
+                        end else begin
+                            is_MA_EX_conflict_src1 = 0;
+                        end
+
+
+                    end else begin
+                        is_MA_EX_conflict_src1 = 0;
+                    end
 
             end else begin
-
                 is_MA_EX_conflict_src1 = 0;
             end
 
-        end
+
     end
 
 endmodule

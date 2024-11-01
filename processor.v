@@ -34,6 +34,8 @@ no-bonus version.
 `include "MA_RW_latch.v"
 `include "RW_Cycle.v"
 `include "data_interlock.v"
+`include "forwarding_src1.v"
+`include "forwarding_src2.v"
 
 
 
@@ -286,6 +288,21 @@ data_interlock is_data_interlock(
 );
 
 
+forwarding_unit_src1 forwarding_src1(
+    .input_OF_IR(Input_OF_IR),
+    .input_EX_IR(input_EX_IR),
+    .input_MA_IR(input_MA_IR),
+    .input_RW_IR(input_RW_IR)
+
+);
+
+forwarding_unit_src2 forwarding_src2(
+    .input_OF_IR(Input_OF_IR),
+    .input_EX_IR(input_EX_IR),
+    .input_MA_IR(input_MA_IR),
+    .input_RW_IR(input_RW_IR)
+
+);
         // Initialize signals in an always block
 initial begin
         reset = 1;                 // Start with reset active 

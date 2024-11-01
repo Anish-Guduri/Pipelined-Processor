@@ -15,11 +15,13 @@ module MA_RW_Latch(
 
     always @( negedge clk) begin
 
-        input_RW_PC <= output_MA_PC;
+        input_RW_controlBus <= output_MA_controlBus;
+        input_RW_IR <= output_MA_IR;
         input_RW_Ld_Result <=MA_Ld_Result;
         input_RW_ALU_Result <=output_MA_ALU_Result;
-        input_RW_IR <= output_MA_IR;
-        input_RW_controlBus <= output_MA_controlBus;
+        input_RW_PC <= output_MA_PC;
+        
+        
         
     end
 
