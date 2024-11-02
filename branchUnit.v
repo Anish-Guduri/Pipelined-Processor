@@ -20,10 +20,11 @@ module Branch_unit(
 
 
     always @(*) begin
+        isUbranch <= Input_EX_controlBus[7];
         isRet <= Input_EX_controlBus[4];
         isBeq <= Input_EX_controlBus[2];
         isBgt <= Input_EX_controlBus[3];
-        isUbranch <= Input_EX_controlBus[7];
+        
 
         // $display("branchPC: %h", EX_branchPC);
         EX_is_Branch_Taken <= ((isBeq && flags[0]) || (isBgt && flags[1]) || (isUbranch));

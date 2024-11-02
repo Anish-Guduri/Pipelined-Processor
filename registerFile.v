@@ -25,21 +25,32 @@ module registerFile(
 
     // Asynchronous Read
     always @(*) begin
+        
         rdData1 = registerfile[operand1];
         rdData2 = registerfile[operand2];
+        if( (operand1 == 4'b1110)  || (operand2 == 4'b1110)) begin
+            $display( " r[%D] ==>> %d ",registerfile[operand1], rdData1); 
+            $display( " r[%D] ==>> %d ",registerfile[operand2], rdData2); 
+        end
+        // $display("register data 1:%d and data 2 :%d" ,rdData1,rdData2);
     end
 
     // Synchronous Reset and Write on Negative Edge of Clock
-    always @(negedge clk) begin
+    always @(negedge clk or posedge reset ) begin
         if (reset) begin
             for (k = 0; k < 16; k = k + 1) begin
                 registerfile[k] <= 32'b0;
+                if( k == 4'b1110) begin
+                    registerfile[k] <= 536870912;
+                end
+                // $display( "r[%D]" ,registerfile[k]);
             end
         end
-        else if (writeEnable && (dReg != 4'b1110) && (dReg != 4'b1111)) begin
+        else if (writeEnable) begin
             registerfile[dReg] <= wrData;
             // $display("Write operation: Register[%d] <= %d", dReg, wrData);
         end
         output_register_file <= registerfile[dReg];
     end
 endmodule
+//  && (dReg != 4'b1110) && (dReg != 4'b1111)

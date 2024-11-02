@@ -92,7 +92,7 @@ b .loop  : 0x97fffffc
 77c8f55b
 
 
-
+// factorial-loop
 0x4c000005
 0x4c400001
 0x4c800001
@@ -102,3 +102,175 @@ b .loop  : 0x97fffffc
 0x04880001
 0x97fffffc
 
+
+// factorial-recursion
+mov r0, 10: 0x4c00000a
+call .factorial: 0x98000001
+cmp r0, 1: 0x2c000001
+bgt .continue   : 0x88000003
+mov r1, 1: 0x4c400001
+ret: 0xa0000000
+sub sp, sp, 8: 0x0fb80008
+st r0, [sp]: 0x7c380000
+st ra, 4[sp]: 0x7ff80004
+sub r0, r0 , 1 : 0x0c000001
+call .factorial: 0x9ffffff8
+ld ra, 4[sp]: 0x77f80004
+ld r0 ,  [sp]: 0x74380000
+add sp,sp, 8: 0x07b80008
+mul r1, r0,r1: 0x10404000
+ret: 0xa0000000
+
+
+
+
+.encode // Factorial Loop
+
+.main:
+mov r0, 5
+mov r1, 1
+mov r2, 1
+.loop:
+cmp r2, r0
+bgt .break
+mul r1, r1, r2
+add r2, r2, 1
+b .loop  
+.break:
+
+
+
+// Factorial Recursion
+
+.main:
+mov r0, 10
+call .factorial
+
+.factorial:
+cmp r0, 1
+bgt .continue	
+mov r1, 1
+ret
+.continue:
+sub sp, sp, 8
+st r0, [sp]
+st ra, 4[sp]
+sub r0, r0 , 1 
+call .factorial
+ld ra, 4[sp]
+ld r0 ,  [sp]
+add sp,sp, 8
+mul r1, r0,r1
+ret
+
+// factorial-rec.asm
+mov r0, 10: 0x4c00000a
+call .factorial: 0x98000001
+cmp r0, 1: 0x2c000001
+bgt .continue	: 0x88000003
+mov r1, 1: 0x4c400001
+ret: 0xa0000000
+sub sp, sp, 8: 0x0fb80008
+st r0, [sp]: 0x7c380000
+st ra, 4[sp]: 0x7ff80004
+sub r0, r0 , 1 : 0x0c000001
+call .factorial: 0x9ffffff8
+ld ra, 4[sp]: 0x77f80004
+ld r0 ,  [sp]: 0x74380000
+add sp,sp, 8: 0x07b80008
+mul r1, r0,r1: 0x10404000
+ret: 0xa0000000
+
+Extracted Hex Codes:
+0x4c00000a
+0x98000001
+0x2c000001
+0x88000003
+0x4c400001
+0xa0000000
+0x0fb80008
+0x7c380000
+0x7ff80004
+0x0c000001
+0x9ffffff8
+0x77f80004
+0x74380000
+0x07b80008
+0x10404000
+0xa0000000
+
+abhay factorial rec
+
+0x4c000003
+0x98000002
+0x90000011
+0x2c000001
+0x8000000d
+0x88000002
+0x9000000b
+0x0fb80008
+0x7c380000
+0x7ff80004
+0x0c000001
+0x9ffffff8
+0x74380000
+0x77f80004
+0x10404000
+0x07b80008
+0xa0000000
+0x4c400001
+0xa0000000
+0x04440000
+
+
+.main:
+.encode mov r0, 3
+.encode call .factorial
+.encode b .end
+
+.factorial:
+.encode cmp r0, 1
+.encode beq .return
+.encode bgt .continue
+.encode b .return
+
+.continue:
+.encode sub sp, sp, 8 
+.encode st r0, [sp] 
+.encode st ra, 4[sp] 
+.encode sub r0, r0, 1 
+.encode call .factorial
+.encode ld r0, [sp] 
+.encode ld ra, 4[sp] 
+.encode mul r1, r0, r1 
+.encode add sp, sp, 8
+.encode ret
+
+.return:
+.encode mov r1, 1
+.encode ret
+
+.end:
+.encode add r1, r1 ,0
+
+
+0x4c000003
+0x98000002
+0x90000011
+0x2c000001
+0x8000000d
+0x88000002
+0x9000000b
+0x0fb80008
+0x7c380000
+0x7ff80004
+0x0c000001
+0x9ffffff8
+0x74380000
+0x77f80004
+0x10404000
+0x07b80008
+0xa0000000
+0x4c400001
+0xa0000000
+0x04440000

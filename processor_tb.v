@@ -139,7 +139,7 @@ wire isDataInterLock;
 
     // Simulate for a specific duration and then finish
     initial begin
-        #1000;            
+        #5000;            
         $finish; 
 
     end                       

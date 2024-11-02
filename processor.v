@@ -341,7 +341,7 @@ initial begin
         reset = 1;                 // Start with reset active 
         // is_Branch_Taken = 1'b0;
         // branchPC = 10'b0;
-        #2
+        #4
         reset = 0;               // Initialize Program Counter
 
     end
