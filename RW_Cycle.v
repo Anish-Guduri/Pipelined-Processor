@@ -6,7 +6,8 @@ module RW_stage(
     input [21:0] input_RW_controlBus,
     output [31:0] RW_Data_value,
     output [3:0] RW_rd,
-    output reg RW_isWb
+    output reg RW_isWb,
+    output reg isLastInstruction
 
 );
 
@@ -32,7 +33,11 @@ module RW_stage(
         .selectLine(isCall)    
     );
 
-    always @(*) begin 
+    always @(*) begin
+        if(input_RW_IR[31:27] == 5'b11111) begin
+            $display("Last Instruction");
+            isLastInstruction = 1'b1;
+        end
         isLd <= input_RW_controlBus[1];
         isCall <= input_RW_controlBus[8];
         RW_isWb <= input_RW_controlBus[6];

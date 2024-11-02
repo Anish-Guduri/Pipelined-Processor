@@ -65,6 +65,7 @@ wire[31:0] output_register_file;
 wire [31:0] op1;
 wire [31:0] op2;
 wire isDataInterLock;
+wire isLastInstruction;
 
     pipeline_top_module processor(
     .clk(clk),
@@ -121,7 +122,8 @@ wire isDataInterLock;
     .output_register_file(output_register_file),
     .op1(op1),
     .op2(op2),
-    .isDataInterLock(isDataInterLock)
+    .isDataInterLock(isDataInterLock),
+    .isLastInstruction(isLastInstruction)
     
    );
 
@@ -136,12 +138,17 @@ wire isDataInterLock;
         $dumpvars(0, testbench);
 
     end
-
+    always @(isLastInstruction) begin
+    if (isLastInstruction == 1) begin
+        #3;  // Add a small delay to ensure any remaining operations complete
+        $finish;
+    end
+end
     // Simulate for a specific duration and then finish
-    initial begin
-        #5000;            
-        $finish; 
+    // initial begin
+    //     #5000;            
+    //     $finish; 
 
-    end                       
+    // end                       
 
 endmodule

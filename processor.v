@@ -110,7 +110,8 @@ output wire is_MA_EX_conflict_src1,
 output wire is_RW_OF_conflict_src2,
 output wire is_RW_EX_conflict_src2,
 output wire is_RW_MA_conflict_src2,
-output wire is_MA_EX_conflict_src2
+output wire is_MA_EX_conflict_src2,
+output wire isLastInstruction
 
 );
 
@@ -301,7 +302,8 @@ RW_stage rw_stage(
     .input_RW_controlBus(input_RW_controlBus),
     .RW_Data_value(RW_Data_value),
     .RW_isWb(RW_isWb),
-    .RW_rd(RW_rd)
+    .RW_rd(RW_rd),
+    .isLastInstruction(isLastInstruction)
 );
 
 data_interlock is_data_interlock(
