@@ -140,7 +140,7 @@ wire isLastInstruction;
     end
     always @(isLastInstruction) begin
     if (isLastInstruction == 1) begin
-        #3;  // Add a small delay to ensure any remaining operations complete
+        #8;  // Add a small delay to ensure any remaining operations complete
         $finish;
     end
 end

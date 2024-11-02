@@ -36,8 +36,8 @@ module forwarding_unit_src2(
         EX_opcode = input_EX_IR[31:27];
         MA_opcode = input_MA_IR[31:27];
         RW_opcode = input_RW_IR[31:27];
-        is_RW_B_conflict =0;
-        is_MA_B_conflict =0;
+        // is_RW_B_conflict =0;
+        // is_MA_B_conflict =0;
         is_RW_OF_conflict_src2 = 0;
         is_RW_EX_conflict_src2 = 0;
         is_RW_MA_conflict_src2 = 0;
@@ -65,7 +65,7 @@ module forwarding_unit_src2(
                     OF_src2 = input_OF_IR[17:14];
                     RW_dest = input_RW_IR[25:22];
                     if (OF_opcode == 5'b01111) OF_src2 = input_OF_IR[25:22];
-
+                    if (RW_opcode == 5'b10011) RW_dest = ra;
                     if ((OF_src2 == RW_dest)) begin
                     is_RW_OF_conflict_src2 = 1;
                     end else begin
@@ -90,7 +90,7 @@ module forwarding_unit_src2(
                     EX_src2 = input_EX_IR[17:14];
                     RW_dest = input_RW_IR[25:22];
                     if (EX_opcode == 5'b01111) EX_src2 = input_EX_IR[25:22];
-                
+                    if (RW_opcode == 5'b10011) RW_dest = ra;
                     if ((EX_src2 == RW_dest)) begin
                     is_RW_EX_conflict_src2 = 1;
                     end else begin
@@ -104,7 +104,7 @@ module forwarding_unit_src2(
                 is_RW_EX_conflict_src2 = 0;
 
                 end
-                if(((MA_opcode == 5'b01101) || (MA_opcode == 5'b10010) || 
+            if(((MA_opcode == 5'b01101) || (MA_opcode == 5'b10010) || 
                 (MA_opcode == 5'b10000) || (MA_opcode == 5'b10001) || 
                 (MA_opcode == 5'b10011) ) == 0 ) begin
                if (MA_opcode != 5'B01111 && input_MA_IR[26] == 1'b1) begin
@@ -113,11 +113,11 @@ module forwarding_unit_src2(
                     MA_src2 = input_MA_IR[17:14];
                     RW_dest = input_RW_IR[25:22];
                     if (MA_opcode == 5'b01111) MA_src2 = input_MA_IR[25:22];
-                
+                    if (RW_opcode == 5'b10011) RW_dest = ra;
                     if ((MA_src2 == RW_dest)) begin
-                    is_RW_MA_conflict_src2 = 1;
+                        is_RW_MA_conflict_src2 = 1;
                     end else begin
-                    is_RW_MA_conflict_src2 = 0;
+                        is_RW_MA_conflict_src2 = 0;
                     end
 
                 end
@@ -141,22 +141,24 @@ module forwarding_unit_src2(
                 if(((EX_opcode == 5'b01101) || (EX_opcode == 5'b10010) || 
                     (EX_opcode == 5'b10000) || (EX_opcode == 5'b10001) || 
                     (EX_opcode == 5'b10011)) == 0 ) begin
-                    if (MA_opcode != 5'B01111 && input_MA_IR[26] == 1'b1) begin
+                    if ((EX_opcode != 5'B01111) && (input_EX_IR[26] == 1'b1)) begin
                         is_MA_EX_conflict_src2 = 0; 
                     end else begin
                         EX_src2 = input_EX_IR[17:14];
                         MA_dest = input_MA_IR[25:22];
-                    if (EX_opcode == 5'b01111) EX_src2 = input_EX_IR[25:22];
-                
-                    if ((EX_src2 == MA_dest)) begin
-                        is_MA_EX_conflict_src2 = 1;
-                    end else begin
-                        is_MA_EX_conflict_src2 = 0;
-                    end
+                        if (EX_opcode == 5'b01111) EX_src2 = input_EX_IR[25:22];
+                        if (MA_opcode == 5'b10011) MA_dest = ra;
+                        
+                        if ((EX_src2 == MA_dest)) begin
+                            is_MA_EX_conflict_src2 = 1;
+                            $display("hello world  MA_src2:%d | EX : %d iR_ex :%h", EX_src2, MA_src2 ,input_EX_IR );
+                        end else begin
+                            is_MA_EX_conflict_src2 = 0;
+                        end
                     end 
-                    end else begin
-                        is_MA_EX_conflict_src2 = 0;
-                    end
+                end else begin
+                    is_MA_EX_conflict_src2 = 0;
+                end
 
         end else begin
             is_MA_EX_conflict_src2 = 0;

@@ -29,8 +29,8 @@ module registerFile(
         rdData1 = registerfile[operand1];
         rdData2 = registerfile[operand2];
         if( (operand1 == 4'b1110)  || (operand2 == 4'b1110)) begin
-            $display( " r[%D] ==>> %d ",registerfile[operand1], rdData1); 
-            $display( " r[%D] ==>> %d ",registerfile[operand2], rdData2); 
+            // $display( " r[%D] ==>> %d ",registerfile[operand1], rdData1); 
+            // $display( " r[%D] ==>> %d ",registerfile[operand2], rdData2); 
         end
         // $display("register data 1:%d and data 2 :%d" ,rdData1,rdData2);
     end

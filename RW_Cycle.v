@@ -35,8 +35,9 @@ module RW_stage(
 
     always @(*) begin
         if(input_RW_IR[31:27] == 5'b11111) begin
-            $display("Last Instruction");
             isLastInstruction = 1'b1;
+            $display("Last Instruction");
+            
         end
         isLd <= input_RW_controlBus[1];
         isCall <= input_RW_controlBus[8];
