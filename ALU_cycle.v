@@ -41,7 +41,7 @@ mux_3x1 #(.regSize(32)) is_RW_EX_forwarding_src1(
 mux_3x1 #(.regSize(32)) is_RW_EX_forwarding_src2(
         .output_y(ALU_Operand_B),          
         .input0(Operand_EX_B),            
-        .input1(RW_Data_value),
+        .input1(input_EX_IR[26] == 0 ? RW_Data_value : Operand_EX_B ),
         .input2(input_MA_ALU_Result),                
         .selectLine({ is_MA_EX_conflict_src2 , is_RW_EX_conflict_src2}) 
     );
@@ -69,7 +69,6 @@ ALU_Module ALU_module(
     .Operand_EX_A(ALU_Operand_A),
     .Operand_EX_B(ALU_Operand_B),
     .ALU_Signals(Input_EX_controlBus[21:9]),
-    // .isCmp(Input_EX_controlBus[11]),
     .flags(flags),
     .EX_ALU_Result(ALU_Result)
 );

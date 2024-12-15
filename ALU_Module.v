@@ -2,12 +2,11 @@ module ALU_Module(
     input [31:0] Operand_EX_A,
     input [31:0] Operand_EX_B,
     input [21:9] ALU_Signals,
-    // input isCmp,
-    output reg [1:0] flags,         // Adjusted to reg
-    output reg signed [31:0] EX_ALU_Result  // Changed to reg for output
+    output reg [1:0] flags,         
+    output reg signed [31:0] EX_ALU_Result  
 );
 
-// Internal signal declarations
+
 reg isAdd, isCmp, isSub, isMul, isDiv, isMod, isLsl, isLsr, isAsr, isOr, isAnd, isNot, isMov;
 
 always @(Operand_EX_A or  Operand_EX_B or ALU_Signals) begin
@@ -26,9 +25,7 @@ always @(Operand_EX_A or  Operand_EX_B or ALU_Signals) begin
     isNot  = ALU_Signals[20];  
     isMov  = ALU_Signals[21];  
 
-    // Initialize outputs to default
-    // EX_ALU_Result = 32'b0; 
-    // flags; // Clear flags at the start of the operation
+  
 
     // ALU operations based on control signals
     if (isAdd) begin

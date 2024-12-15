@@ -31,14 +31,16 @@ module data_interlock(
         EX_opcode = input_EX_IR[31:27];
 
         if( (EX_opcode == 5'B01110) == 1)  begin
+
+            
             if(((OF_opcode == 5'B01101) || (OF_opcode == 5'B10010) || 
                 (OF_opcode == 5'B10000) || (OF_opcode == 5'B10001) || 
-                (OF_opcode == 5'B10011) || (OF_opcode == 5'B01111 )) == 0) begin
-
+                (OF_opcode == 5'B10011) || (OF_opcode == 5'B01111 )) == 1) begin
+                    
                   isDataInterLock = 0;
 
                 end else begin
-                   
+                   $display("EX_opcode %b of-Opcode %b",EX_opcode, OF_opcode);
                     src1 = input_OF_IR[21:18];
                     src2 = input_OF_IR[17:14];
                     if (OF_opcode == 5'B10100) begin

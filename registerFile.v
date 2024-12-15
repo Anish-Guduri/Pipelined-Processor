@@ -23,7 +23,6 @@ module registerFile(
     reg [31:0] registerfile [0:15];
     reg temp = 32'b100;
 
-    // Asynchronous Read
     always @(*) begin
         
         rdData1 = registerfile[operand1];
@@ -39,7 +38,7 @@ module registerFile(
     always @(negedge clk or posedge reset ) begin
         if (reset) begin
             for (k = 0; k < 16; k = k + 1) begin
-                registerfile[k] <= 32'b0;
+                registerfile[k] <= 0;
                 if( k == 4'b1110) begin
                     registerfile[k] <= 536870912;
                 end
@@ -53,4 +52,3 @@ module registerFile(
         output_register_file <= registerfile[dReg];
     end
 endmodule
-//  && (dReg != 4'b1110) && (dReg != 4'b1111)

@@ -46,7 +46,7 @@ module memory(
         memory[i+1]   = k[15:8];        // Next byte
         memory[i+2]   = k[23:16];       // Next byte
         memory[i+3]   = k[31:24];       // Most significant byte
-            // k=k+32'b1010;
+            // k=k+32'b1;
             i=i+4;  
         // $display("i:%d  | k : %d ", i,k);    
         end

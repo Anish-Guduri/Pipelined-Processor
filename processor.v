@@ -338,13 +338,13 @@ forwarding_unit_src2 forwarding_src2(
     .is_MA_EX_conflict_src2(is_MA_EX_conflict_src2)
 
 );
-        // Initialize signals in an always block
+  
 initial begin
-        reset = 1;                 // Start with reset active 
+        reset = 1;                 
         // is_Branch_Taken = 1'b0;
         // branchPC = 10'b0;
         #4
-        reset = 0;               // Initialize Program Counter
+        reset = 0;               
 
     end
 

@@ -23,9 +23,8 @@ module forwarding_unit_src1(
     reg [3:0] EX_src1;
 
     reg [3:0] ra = 4'b1111;
-    // reg first_Done =0;
 
-    // Determine opcode conflicts
+   
     always @(*) begin
         // first_Done =0;
         OF_opcode = input_OF_IR[31:27];
@@ -73,7 +72,7 @@ module forwarding_unit_src1(
                         if (RW_opcode == 5'b10011) RW_dest = ra;
 
                         if(EX_src1 == RW_dest) begin
-                            $display("  %h | %h |  %b | %b |", input_RW_IR, input_EX_IR ,RW_dest,EX_src1);
+                            // $display("  %h | %h |  %b | %b |", input_RW_IR, input_EX_IR ,RW_dest,EX_src1);
                             is_RW_EX_conflict_src1 = 1;
                         end else begin
                             is_RW_EX_conflict_src1 = 0;

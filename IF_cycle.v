@@ -48,7 +48,6 @@ module IF_cycle(
             if(isDataInterLock  == 1'b0) begin
                 // $display("PC: %d  %h",PC, IR);
                 // $display("isbranch taken %b  | PC : %d | muxNextPC %d | IR: %H",is_Branch_Taken,PC, mux_nextPC,IR);
-                // PC <= next_PC;
                 if(is_Branch_Taken == 1)begin
                     PC <= branchPC;
                     #1;
@@ -58,8 +57,7 @@ module IF_cycle(
                 address <= PC;        // Set address based on mux output;
                 outputPC <= PC;
                 PC <= mux_nextPC;  // Increment PC
-                // if(is_Branch_Taken == 1)
-                //     PC <= mux_nextPC;
+
                 end
             end
             

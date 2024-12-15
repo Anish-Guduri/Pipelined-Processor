@@ -146,7 +146,7 @@ module forwarding_unit_src2(
                     end else begin
                         EX_src2 = input_EX_IR[17:14];
                         MA_dest = input_MA_IR[25:22];
-                        if (EX_opcode == 5'b01111) EX_src2 = input_EX_IR[25:22];
+                        // if (EX_opcode == 5'b01111) EX_src2 = input_EX_IR[25:22];
                         if (MA_opcode == 5'b10011) MA_dest = ra;
                         
                         if ((EX_src2 == MA_dest)) begin

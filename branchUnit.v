@@ -12,9 +12,9 @@ module Branch_unit(
     reg isRet, isBeq, isBgt, isUbranch;
 
     mux_2x1 #(.regSize(32)) isReturn_mux (
-        .output_y(EX_branchPC),          // MUX output: the next value of the PC
-        .input0(EX_branchTarget),            // Normal PC increment
-        .input1(Operand_EX_A),              // Branch target address
+        .output_y(EX_branchPC),          
+        .input0(EX_branchTarget),            
+        .input1(Operand_EX_A),              
         .selectLine(isRet)    // Selection signal: branch taken or not
     );
 

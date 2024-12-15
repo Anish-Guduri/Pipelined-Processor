@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+`timescale 1ps / 1ps
 
 module testbench;
 
@@ -127,10 +127,10 @@ wire isLastInstruction;
     
    );
 
-    // Generate a clock signal
+    // Generating a clock signal
     initial begin
-        clk = 1;                       // Initialize clock to 0
-        forever #5 clk = ~clk;         // Toggle clock every 5 ns
+        clk = 1;                      
+        forever #5 clk = ~clk;         
     end
  
     initial begin
@@ -140,7 +140,7 @@ wire isLastInstruction;
     end
     always @(isLastInstruction) begin
     if (isLastInstruction == 1) begin
-        #8;  // Add a small delay to ensure any remaining operations complete
+        #8; 
         $finish;
     end
 end
